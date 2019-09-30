@@ -1,0 +1,19 @@
+---
+title: "Meeting notes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+###Meeting 27-9
+
+Marc will look into memory issues home folders
+
+**To do**:
+
+* High quality sequnces needed for correct overlap, also large enough contigs needed to identify sequences. 
+Look into sequencing methods (long reads, depth), data and if trimming is needed (how much? Quality vs abundance).
+* https://kasperdanielhansen.github.io/genbioconductor/html/GenomicRanges_GRanges.html GRanges to work with genomic data in R
+gldB sequence a good marker? Get gene sequence (use gviz)
+* BLAST to find homologs, anything homologous? Multiple copies as well? Good marker gene?
