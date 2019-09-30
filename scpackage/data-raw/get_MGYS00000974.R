@@ -164,6 +164,6 @@ MGYS00000974 <- df
 # save to csv
 #fname = paste0("~/API_testing/", accession, "_XY", ".csv")
 #write.csv(df, file = fname)
-readr::write_csv(MGYS00000974, path = "inst/MGYS00000974.csv")
+readr::write_csv(MGYS00000974, path = "inst/extdata/MGYS00000974.csv")
 
 usethis::use_data(MGYS00000974)
