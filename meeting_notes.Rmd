@@ -17,3 +17,10 @@ Look into sequencing methods (long reads, depth), data and if trimming is needed
 * https://kasperdanielhansen.github.io/genbioconductor/html/GenomicRanges_GRanges.html GRanges to work with genomic data in R
 gldB sequence a good marker? Get gene sequence (use gviz)
 * BLAST to find homologs, anything homologous? Multiple copies as well? Good marker gene?
+
+###Meeting notes 2-10-2019
+* docker file programs in Rpackage
+* gviz voor genomisch context
+* metaquast resultaten vergelijken met QIIME, classifier en metaphylan
+* Marc kijkt nog naar surfsara research cloud, r versies incompatible
+
