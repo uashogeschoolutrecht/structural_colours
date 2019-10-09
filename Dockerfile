@@ -1,15 +1,20 @@
 # Base image https://hub.docker.com/u/rocker/
 FROM rocker/geospatial
 
+
+#RUN apt-get update \
+#	&& apt-get install -y wget libxml-libxml-perl
+#
+#RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.0/sratoolkit.2.10.0-ubuntu64.tar.gz -O /tmp/sratoolkit.tar.gz \
+#	&& tar zxvf /tmp/sratoolkit.tar.gz -C /opt/ && rm /tmp/sratoolkit.tar.gz
+#
+#ENV PATH="/opt/sratoolkit.2.10.0-ubuntu64/bin/:${PATH}"
+
+
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     ncbi-blast+
-
-## Install extra R packages using requirements.R
-## Specify requirements as R install commands e.g.
-##
-## install.packages("<myfavouritepacakge>") or
-## devtools::install("SymbolixAU/googleway")
+    
 
 ## Copy requirements.R to container directory /tmp
 COPY ./DockerConfig/requirements.R /tmp/requirements.R
@@ -18,10 +23,6 @@ RUN Rscript /tmp/requirements.R
 
 # create an R user
 ENV USER rstudio
-
-## Copy your working files over
-## The $USER defaults to `rstudio` but you can change this at runtime
-COPY ./R /home/$USER/R
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/conda/bin:$PATH
