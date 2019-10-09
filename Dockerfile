@@ -2,19 +2,19 @@
 FROM rocker/geospatial
 
 
-#RUN apt-get update \
-#	&& apt-get install -y wget libxml-libxml-perl
-#
-#RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.0/sratoolkit.2.10.0-ubuntu64.tar.gz -O /tmp/sratoolkit.tar.gz \
-#	&& tar zxvf /tmp/sratoolkit.tar.gz -C /opt/ && rm /tmp/sratoolkit.tar.gz
-#
-#ENV PATH="/opt/sratoolkit.2.10.0-ubuntu64/bin/:${PATH}"
+RUN apt-get update \
+	&& apt-get install -y wget libxml-libxml-perl
+
+RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.0/sratoolkit.2.10.0-ubuntu64.tar.gz -O /tmp/sratoolkit.tar.gz \
+	&& tar zxvf /tmp/sratoolkit.tar.gz -C /opt/ && rm /tmp/sratoolkit.tar.gz
+
+ENV PATH="/opt/sratoolkit.2.10.0-ubuntu64/bin/:${PATH}"
 
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     ncbi-blast+
-    
+
 
 ## Copy requirements.R to container directory /tmp
 COPY ./DockerConfig/requirements.R /tmp/requirements.R
@@ -25,7 +25,9 @@ RUN Rscript /tmp/requirements.R
 ENV USER rstudio
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/conda/bin:$PATH
+
+
+ENV PATH="/opt/conda/bin:${PATH}"
 
 RUN apt-get update --fix-missing && \
     apt-get install -y wget bzip2 ca-certificates curl git && \
@@ -44,9 +46,13 @@ RUN conda update conda -y
 RUN conda install conda-build -y
 RUN conda install anaconda-client -y
 
+
 RUN wget https://data.qiime2.org/distro/core/qiime2-2019.7-py36-linux-conda.yml && \
     conda env create -n qiime2-2019.7 --file qiime2-2019.7-py36-linux-conda.yml && \
     rm qiime2-2019.7-py36-linux-conda.yml
 
+
 RUN conda create --name q2-metaphlan2 && \
     conda install -c fasnicar -c bioconda q2-metaphlan2 -n q2-metaphlan2
+
+RUN echo "export PATH=/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
