@@ -17,7 +17,7 @@
 #sudo docker build --rm --force-rm -t rstudio/pack-testing1 .
 
 PACK_DIR=${PWD}/scpackage
-sudo docker run -d --rm -p 28787:8787 --name geo_test -e USERID=$UID -e PASSWORD=SoSecret -v $PACK_DIR:/home/rstudio/scpackage rstudio/pack-testing17
+sudo docker run -d --rm -p 28787:8787 --name geo_test -e USERID=$UID -e PASSWORD=SoSecret -v $PACK_DIR:/home/rstudio/scpackage rstudio/pack-testing23
 
 # this is an example of running the container in interactive mode and logging into a bash shell
 # sudo docker run -it --rm  --name hello-world2 -e USERID=$UID -v $DATA_DIR:/home/rstudio/Data rstudio/hello-world  /bin/bash

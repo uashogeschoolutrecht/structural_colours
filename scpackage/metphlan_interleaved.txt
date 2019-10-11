@@ -1,0 +1,17 @@
+Help message for read_fastx.py
+Traceback (most recent call last):
+  File "/opt/conda/envs/q2-metaphlan2/bin/read_fastx.py", line 4, in <module>
+    __import__('pkg_resources').run_script('q2-metaphlan2==2.7.8', 'read_fastx.py')
+  File "/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/pkg_resources/__init__.py", line 661, in run_script
+    self.require(requires)[0].run_script(script_name, ns)
+  File "/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/pkg_resources/__init__.py", line 1441, in run_script
+    exec(code, namespace, namespace)
+  File "/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts/read_fastx.py", line 123, in <module>
+    read_and_write_raw(f, opened=False, min_len=min_len)
+  File "/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts/read_fastx.py", line 88, in read_and_write_raw
+    with fopen(fd) as inf:
+  File "/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts/read_fastx.py", line 47, in fopen
+    return open(fn)
+FileNotFoundError: [Errno 2] No such file or directory: ''
+#SampleID	Metaphlan2_Analysis
+unclassified	100.0

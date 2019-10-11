@@ -1,9 +1,11 @@
 # Base image https://hub.docker.com/u/rocker/
 FROM rocker/geospatial
 
-
 RUN apt-get update \
 	&& apt-get install -y wget libxml-libxml-perl
+
+RUN apt-get update \
+  && apt-get install -y libany-uri-escape-perl
 
 RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.0/sratoolkit.2.10.0-ubuntu64.tar.gz -O /tmp/sratoolkit.tar.gz \
 	&& tar zxvf /tmp/sratoolkit.tar.gz -C /opt/ && rm /tmp/sratoolkit.tar.gz
@@ -55,4 +57,4 @@ RUN wget https://data.qiime2.org/distro/core/qiime2-2019.7-py36-linux-conda.yml 
 RUN conda create --name q2-metaphlan2 && \
     conda install -c fasnicar -c bioconda q2-metaphlan2 -n q2-metaphlan2
 
-RUN echo "export PATH=/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
+RUN echo "export PATH=/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
