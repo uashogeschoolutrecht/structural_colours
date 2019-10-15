@@ -58,3 +58,4 @@ RUN conda create --name q2-metaphlan2 && \
     conda install -c fasnicar -c bioconda q2-metaphlan2 -n q2-metaphlan2
 
 RUN echo "export PATH=/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
+#RUN echo "source /opt/conda/etc/profile.d/conda.sh" >> /etc/bash.bashrc

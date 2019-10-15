@@ -17,10 +17,8 @@ q2_metaphlan2 <- function(input1 , out) {
   system(command)
 }
 
-#q2_metaphlan2("~/scpackage/inst/extdata/SRR7778149.1_1.fastq", "~/scpackage/inst/extdata/SRR7778149.1_2.fastq")
-q2_metaphlan2("~/scpackage/inst/extdata/SRR7778149.1.fastq", out="metaphlan_interleaved3.txt")
+system("conda activate q2-metaphlan2")
+system("metaphlan2.py ~/scpackage/inst/extdata/SRR7778149.1_1.fastq,~/scpackage/inst/extdata/SRR7778149.1_2.fastq --input_type fastq --bowtie2out ~/scpackage/metagenome8.bowtie2.bz2 > test8")
+#--bowtie2db ~/scpackage/metaphlan_db
 
-/opt/conda/envs/q2-metaphlan2/bin/metaphlan2.py ~/scpackage/metagenome2.bowtie2.bz2 --bowtie2db ~/scpackage/metaphlan_db --input_type bowtie2out > metaphlan_interleaved2.txt
-
-/opt/conda/envs/q2-metaphlan2/bin/metaphlan2.py ~/scpackage/inst/extdata/SRR7778149.1_1.fastq,~/scpackage/inst/extdata/SRR7778149.1_2.fastq --bowtie2db ~/scpackage/metaphlan_db --input_type fastq --bowtie2out ~/scpackage/metagenome4.bowtie2.bz2> test4
 
