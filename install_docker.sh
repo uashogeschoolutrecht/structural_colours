@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #install docker
-
 sudo apt-get update
 sudo apt-get install \
     apt-transport-https \
@@ -18,4 +17,4 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 #test installation with following line
-# sudo docker run hello-world
+sudo docker -v
