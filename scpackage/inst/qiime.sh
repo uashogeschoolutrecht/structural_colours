@@ -1,25 +1,55 @@
 #!/bin/bash
 
-# Script to run qiime2-2019.7 on shotgun metagenomes
+# Script to run qiime2-2019.7 analysis pipeline
 # Author: Patty Rosendaal
 # Date: 11-Oct-2019
 
-###   Preparing data  ###
-# Get SRA file
-if [ ! -f /home/$USER/research_drive/geodescent/SRR7778149.1 ]; then
-    wget https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos/sra-pub-run-1/SRR7778149/SRR7778149.1
-    mv SRR7778149.1 /home/$USER/research_drive/geodescent/
+
+#############
+# user input
+#############
+
+# input flag s (path) for single end and p for paired end (path1,path2), output name and main path dir
+while getopts s:p:o:d: aflag
+do
+case "${aflag}"
+in
+s) INPUT_SE=${OPTARG};;
+p) INPUT_PE=${OPTARG};;
+o) OUTPUT_NAME=${OPTARG};;
+d) DRIVE_DIR=${OPTARG};;
+esac
+done
+#splitting paired reads file paths
+IFS=',' read -r PE_1 PE_2 <<< "$INPUT_PE"
+
+#checking input
+if [ ! -z "$INPUT_SE" ]; then
+   echo "Supplied single end read $INPUT_SE"
 fi
-# Dumping fastq files
-if [ ! -f /home/$USER/research_drive/geodescent/SRR7778149.1_1.fastq ]; then
-    echo "Dumping and splitting fastq files:"
-    fastq-dump --split-files /home/$USER/research_drive/geodescent/SRR7778149.1
+if [ ! -z "$INPUT_PE" ]; then
+   echo "Supplied paired end reads $PE_1 and $PE_2"
+fi
+if [ ! -z "$INPUT_SE" ] && [ ! -z "$INPUT_PE" ]; then
+   echo "WARNING: both paired end and single end options used, this is not logical. Please check that your input is one sample."
 fi
 
-# Specifying samples to use
-SAMPLE11="/home/$USER/research_drive/geodescent/SRR7778149.1_1.fastq"
-SAMPLE12="/home/$USER/research_drive/geodescent/SRR7778149.1_2.fastq"
+#creating output dir, checking input
+echo "Saving results on research drive $DRIVE_DIR"
 
+if [ -d $DRIVE_DIR/${OUTPUT_NAME} ]; then
+    echo "WARNING: output directory $DRIVE_DIR/${OUTPUT_NAME} already exists."
+fi
+
+if [ ! -d $DRIVE_DIR/${OUTPUT_NAME} ]; then
+    echo "Creating output directory $DRIVE_DIR/${OUTPUT_NAME}"
+    
+    mkdir $DRIVE_DIR/${OUTPUT_NAME}
+fi
+
+###########
+# running
+###########
 
 ###   Activating qiime environment   ###
 source /opt/conda/etc/profile.d/conda.sh
@@ -27,54 +57,79 @@ conda activate qiime2-2019.7
 # Test if activation works
 qiime --version
 
-
-############################################################################
-#    Running qiime taxonomy analysis on compost metagenome SRR7778149.1    #
-############################################################################
-
 ###   Creating manifest en metadata file   ###
-touch manifest_SRR7778149.1.txt
-echo "#manifest for import SRR7778149 fastq files
+#PE
+if [ ! -z "$INPUT_PE" ]; then
+    if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/metadata_${OUTPUT_NAME}.txt ]; then
+        touch manifest_${OUTPUT_NAME}.txt
+        echo "#manifest for import PE fastq files
 sample-id,absolute-filepath,direction
-sample_1,$SAMPLE11,forward
-sample_1,$SAMPLE12,reverse" > manifest_SRR7778149.1.txt
-mv manifest_SRR7778149.1.txt /home/$USER/research_drive/geodescent/
+${OUTPUT_NAME},$PE_1,forward
+${OUTPUT_NAME},$PE_2,reverse" > manifest_${OUTPUT_NAME}.txt
+        mv manifest_${OUTPUT_NAME}.txt $DRIVE_DIR/${OUTPUT_NAME}/
 
-touch sample_1_metadata.txt
-echo "#metadata file
-SampleID  Year  Latitude  Longtitude  Type  Incubation
-sample_1  2018  NA  NA  compost 118" > sample_1_metadata.txt
-mv sample_1_metadata.txt /home/$USER/research_drive/geodescent/
+        touch metadata_${OUTPUT_NAME}.txt
+        echo "#metadata file
+sample-id  Type
+${OUTPUT_NAME}  metagenome" > metadata_${OUTPUT_NAME}.txt
+        mv metadata_${OUTPUT_NAME}.txt $DRIVE_DIR/${OUTPUT_NAME}/
+    fi
+fi
+
+#SE
+if [ ! -z "$INPUT_SE" ]; then
+    if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/metadata_${OUTPUT_NAME}.txt ]; then
+        touch manifest_${OUTPUT_NAME}.txt
+        echo "#manifest for import SE fastq file
+sample-id,absolute-filepath
+${OUTPUT_NAME},$INPUT_SE" > manifest_${OUTPUT_NAME}.txt
+        mv manifest_${OUTPUT_NAME}.txt $DRIVE_DIR/${OUTPUT_NAME}/
+
+        touch metadata_${OUTPUT_NAME}.txt
+        echo "#metadata file
+sample-id  Type
+${OUTPUT_NAME}  metagenome" > metadata_${OUTPUT_NAME}.txt
+        mv metadata_${OUTPUT_NAME}.txt $DRIVE_DIR/${OUTPUT_NAME}/
+    fi
+fi
 
 ###   Importing sequences as qiime objects   ###
-if [ ! -f /home/$USER/research_drive/geodescent/sample_1.qza ]; then
-    echo "Importing sequences, this might take some time" #1u 15'
+if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza ] && [ ! -z "$INPUT_SE" ]; then
+    echo "Importing single end sequence, this might take some time" #1u 15'
     
-    qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-path /home/$USER/research_drive/geodescent/manifest_SRR7778149.1.txt --output-path /home/$USER/research_drive/geodescent/sample_1.qza --input-format PairedEndFastqManifestPhred33
+    qiime tools import --type 'SampleData[SequencesWithQuality]' --input-path $DRIVE_DIR/${OUTPUT_NAME}/manifest_${OUTPUT_NAME}.txt --output-path $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza --input-format FastqManifestPhred33
+fi
+if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza ] && [ ! -z "$INPUT_PE" ]; then
+    echo "Importing paired end sequences, this might take some time" #1u 15'
+    
+    qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-path $DRIVE_DIR/${OUTPUT_NAME}/manifest_${OUTPUT_NAME}.txt --output-path $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza --input-format PairedEndFastqManifestPhred33
 fi
 
 ###   Creating visualization of the sample reads   ###
 echo "NOTE: The .qzv file can be visualized in QIIME2 view"
 
-if [ ! -f /home/$USER/research_drive/geodescent/sample_1.qzv ]; then
-    qiime demux summarize --i-data /home/$USER/research_drive/geodescent/sample_1.qza --o-visualization /home/$USER/research_drive/geodescent/sample_1.qzv
+if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qzv ]; then
+    qiime demux summarize --i-data $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza --o-visualization $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qzv
 fi
 
+
+
 ###   Trimming and denoising   ###
-if [ ! -f /home/$USER/research_drive/geodescent/sample_1_rep_seqs.qza ]; then
+if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_rep_seqs.qza ]; then
     echo "Trimming and denoising sequences using dada2, this might take some time"
     
-    qiime dada2 denoise-paired --i-demultiplexed-seqs /home/$USER/research_drive/geodescent/sample_1.qza --p-trim-left-f 10 --p-trim-left-r 10 --p-trunc-len-f 120 --p-trunc-len-r 90 --o-table /home/$USER/research_drive/geodescent/sample_1_table.qza --o-representative-sequences /home/$USER/research_drive/geodescent/sample_1_rep_seqs.qza --o-denoising-stats /home/$USER/research_drive/geodescent/sample_1_denoising_stats.qza
+    R --version
+    qiime dada2 denoise-paired --p-n-threads 4 --i-demultiplexed-seqs $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza --p-trim-left-f 10 --p-trim-left-r 10 --p-trunc-len-f 120 --p-trunc-len-r 90 --o-table $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_table.qza --o-representative-sequences $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_rep_seqs.qza --o-denoising-stats $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_denoising_stats.qza
 fi
 #Visualize results
-if [ ! -f /home/$USER/research_drive/geodescent/sample_1_denoising_stats.qza ]; then
+if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_denoising_stats.qza ]; then
     echo "Creating visualization of denoising statistics table"
     
-    qiime metadata tabulate --m-input-file /home/$USER/research_drive/geodescent/sample_1_denoising_stats.qza --o-visualization /home/$USER/research_drive/geodescent/sample_1_denoising_stats.qzv
+    qiime metadata tabulate --m-input-file $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_denoising_stats.qza --o-visualization $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_denoising_stats.qzv
 fi
 
 #Creating classifier
-if [ ! -f /home/$USER/research_drive/geodescent/classifier.qza ]; then
+if [ ! -f $DRIVE_DIR/classifier.qza ]; then
     echo "Creating taxonomy classifier from SILVA 132 99 16S database"
     
     wget https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip
@@ -86,10 +141,10 @@ if [ ! -f /home/$USER/research_drive/geodescent/classifier.qza ]; then
 fi
 
 #Classifying sample taxonomy
-if [ ! -f /home/$USER/research_drive/geodescent/sample_1_taxa_bar_plots.qzv ]; then
+if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_taxa_bar_plots.qzv ]; then
     echo "Classifying taxonomy of sample"
     
-    qiime feature-classifier classify-sklearn --i-classifier /home/$USER/research_drive/geodescent/classifier.qza --i-reads /home/$USER/research_drive/geodescent/sample_1_rep_seqs.qza --o-classification /home/$USER/research_drive/geodescent/sample_1_taxonomy.qza
-    qiime metadata tabulate --m-input-file /home/$USER/research_drive/geodescent/sample_1_taxonomy.qza --o- /home/$USER/research_drive/geodescent/taxonomy
-    qiime taxa barplot --i-table /home/$USER/research_drive/geodescent/sample_1_table.qza --i-taxonomy /home/$USER/research_drive/geodescent/sample_1_taxonomy.qza --m-metadata-file /home/$USER/research_drive/geodescent/sample_1_metadata.txt --o-visualization /home/$USER/research_drive/geodescent/sample_1_taxa_bar_plots
+    qiime feature-classifier classify-sklearn --i-classifier $DRIVE_DIR/classifier.qza --i-reads $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_rep_seqs.qza --o-classification $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_taxonomy.qza
+    qiime metadata tabulate --m-input-file $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_taxonomy.qza --o- $DRIVE_DIR/${OUTPUT_NAME}/taxonomy
+    qiime taxa barplot --i-table $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_table.qza --i-taxonomy $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_taxonomy.qza --m-metadata-file /$DRIVE_DIR/${OUTPUT_NAME}/metadata_${OUTPUT_NAME}.txt --o-visualization $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_taxa_bar_plots
 fi
