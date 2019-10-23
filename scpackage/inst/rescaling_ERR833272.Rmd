@@ -1,0 +1,31 @@
+---
+title: "rescaling phred"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+file = readLines(con = "/home/rstudio/scpackage/inst/ERR833272_2.fastq")
+
+# creating subset for testing
+#counter = 0
+#test_file = ""
+#for (line in file) {
+#  if (counter < 8) {
+#    test_file = append(test_file, line)
+#  }
+#  counter = counter + 1
+#}
+#test_file = test_file[-1]
+
+#checking quality distribution and range
+all_qual = concatenate_qualities(file)
+boxplot(gtools::asc(all_qual, simplify = TRUE))
+range = ASCII_range_concatenated_qualities(all_qual)
+
+#to go from +39 to +33, -6 ascii chars
+rescale_phred_score(file_lines = file, scale_metric = -6, outfile = "/home/rstudio/scpackage/inst/ERR833272_2_rescaled_test.fastq")
+```

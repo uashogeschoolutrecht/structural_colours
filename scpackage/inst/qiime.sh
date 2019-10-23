@@ -119,7 +119,7 @@ if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_rep_seqs.qza ]; then
     echo "Trimming and denoising sequences using dada2, this might take some time"
     
     R --version
-    qiime dada2 denoise-paired --p-n-threads 4 --i-demultiplexed-seqs $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza --p-trim-left-f 10 --p-trim-left-r 10 --p-trunc-len-f 120 --p-trunc-len-r 90 --o-table $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_table.qza --o-representative-sequences $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_rep_seqs.qza --o-denoising-stats $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_denoising_stats.qza
+    qiime dada2 denoise-paired --verbose --p-n-threads 4 --i-demultiplexed-seqs $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}.qza --p-trim-left-f 75 --p-trim-left-r 75 --p-trunc-len-f 825 --p-trunc-len-r 825 --o-table $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_table.qza --o-representative-sequences $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_rep_seqs.qza --o-denoising-stats $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_denoising_stats.qza
 fi
 #Visualize results
 if [ ! -f $DRIVE_DIR/${OUTPUT_NAME}/${OUTPUT_NAME}_denoising_stats.qza ]; then

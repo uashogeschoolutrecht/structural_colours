@@ -66,3 +66,8 @@ RUN touch /home/$USER/.Renviron
 #RUN echo "R_HOME_DIR=/opt/conda/envs/qiime2-2019.7/lib/R" >> /home/$USER/.Renviron
 #RUN echo "LD_LIBRARY_PATH=/opt/conda/envs/qiime2-2019.7/lib:\${LD_LIBRARY_PATH}" >> /home/$USER/.Renviron
 RUN echo "R_LIBS=/opt/conda/envs/qiime2-2019.7/lib/R/library:\${R_LIBS}" >> /home/$USER/.Renviron
+
+RUN apt-get update
+RUN apt-get install -y liblist-moreutils-perl
+
+#https://hub.docker.com/r/rocker/shiny/dockerfile

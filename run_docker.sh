@@ -12,12 +12,11 @@
 #    -v $DATA_DIR:/home/rstudio/Data \       # mount data directory to pick up changes or write to host
 #       rstudio/hello-world                  # the name of the image
 
-# simple one liner for command line copying
 
 #sudo docker build --rm --force-rm -t rstudio/pack-testing1 .
 
 PACK_DIR=${PWD}/scpackage
-sudo docker run -d --rm -p 28787:8787 --name geo_test -e USERID=$UID -e PASSWORD=SoSecret -v $PACK_DIR:/home/rstudio/scpackage -v /home/patty_rosendaal/research_drive:/home/rstudio/research_drive rstudio/pack-testing18
+sudo docker run -d --rm -p 28787:8787 --name geo_testing -e USERID=$UID -e PASSWORD=SoSecret -v $PACK_DIR:/home/rstudio/scpackage -v /home/patty_rosendaal/research_drive:/home/rstudio/research_drive rstudio/pack-testing19
 
-# this is an example of running the container in interactive mode and logging into a bash shell
-# sudo docker run -it --rm  --name hello-world2 -e USERID=$UID -v $DATA_DIR:/home/rstudio/Data rstudio/hello-world  /bin/bash
+#sudo docker exec -it <container-id> bash
+#adduser <username>
