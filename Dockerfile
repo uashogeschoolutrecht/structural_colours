@@ -50,24 +50,52 @@ RUN conda create -n sratoolkit -c bioconda sra-tools
 RUN wget http://cab.spbu.ru/files/release3.12.0/SPAdes-3.12.0-Linux.tar.gz && \
     tar -xzf SPAdes-3.12.0-Linux.tar.gz
 
-##########
-# NeSSM
-##########
-RUN wget http://cbb.sjtu.edu.cn/~ccwei/pub/software/NeSSM/NeSSM.tarz && \
-    tar -xzf NeSSM.tarz && \
-    cd NeSSM/NeSSM_CPU/ && \
-    make
+RUN conda create -n megahit -c bioconda megahit
+
+RUN wget https://netcologne.dl.sourceforge.net/project/biogrinder/biogrinder/Grinder-0.5.4/Grinder-0.5.4.tar.gz && \
+    tar -xzf Grinder-0.5.4.tar.gz
+    
+MAINTAINER biocontainers <biodocker@gmail.com>
+LABEL    software="grinder" \ 
+    base_image="biocontainers/biocontainers:vdebian-buster-backports_cv1" \ 
+    container="grinder" \ 
+    about.summary="Versatile omics shotgun and amplicon sequencing read simulator" \ 
+    about.home="https://sourceforge.net/projects/biogrinder/" \ 
+    software.version="0.5.4-5-deb" \ 
+    upstream.version="0.5.4" \ 
+    version="1" \ 
+    about.copyright="2009-2011, Florent Angly <florent.angly@gmail.com>" \ 
+    about.license="GPL-3+" \ 
+    about.license_file="/usr/share/doc/grinder/copyright" \ 
+    extra.binaries="/usr/bin/average_genome_size,/usr/bin/change_paired_read_orientation,/usr/bin/grinder" \ 
+    about.tags=""
+
+USER root
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && (apt-get install -t buster-backports -y grinder || apt-get install -y grinder) && apt-get clean && apt-get purge && rm -rf /var/lib/apt/lists/* /tmp/*
+
+#RUN mkdir /usr/share/perl5/Math/Random/ && \
+#    mv /usr/lib/x86_64-linux-gnu/perl5/5.24/Math/Random/MT.pm /usr/share/perl5/Math/Random/
+#RUN echo "export PERL5LIB=/usr/share/perl5:$PERL5LIB" >> /etc/bash.bashrc
+
+
+#RUN wget https://downloads.sourceforge.net/project/quast/quast-5.0.2.tar.gz && \
+#    tar -xzf quast-5.0.2.tar.gz
+
+    
+RUN wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.8.zip && \
+    unzip fastqc_v0.11.8.zip
+
+RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip && \
+    unzip Trimmomatic-0.39.zip
 
 RUN echo "export PATH=/SPAdes-3.12.0-Linux/bin:/opt/bbmap:/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
 RUN echo "export TMPDIR=/tmp" >> /etc/bash.bashrc
-
 RUN touch /home/$USER/.Renviron
-#RUN echo "R_HOME=/opt/conda/envs/qiime2-2019.7/lib/R" >> /home/$USER/.Renviron
-#RUN echo "R_HOME_DIR=/opt/conda/envs/qiime2-2019.7/lib/R" >> /home/$USER/.Renviron
-#RUN echo "LD_LIBRARY_PATH=/opt/conda/envs/qiime2-2019.7/lib:\${LD_LIBRARY_PATH}" >> /home/$USER/.Renviron
 RUN echo "R_LIBS=/opt/conda/envs/qiime2-2019.7/lib/R/library:\${R_LIBS}" >> /home/$USER/.Renviron
 
 RUN apt-get update
-RUN apt-get install -y liblist-moreutils-perl
+RUN apt-get install -y liblist-moreutils-perl && \
+    apt-get install libmath-random-mt-perl
 
 #https://hub.docker.com/r/rocker/shiny/dockerfile

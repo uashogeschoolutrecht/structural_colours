@@ -1,4 +1,12 @@
-# load libraries, use install.packages(library) if not installed
+#' This functions uses the MGnify API to connect to ebi to collect the metadata for jcraig cruise MGYS00000974.
+#'
+#' @return Data frame samples and metadata 277 x 22
+#' @export
+#'
+#' @examples
+#' get_MGYS00000974()
+get_MGYS00000974 = function() {
+  # load libraries, use install.packages(library) if not installed
 library("rjsonapi")
 
 # define project
@@ -161,9 +169,11 @@ df$ENA_checklist <- unlist(ENA_checklist)
 
 MGYS00000974 <- df
 
-# save to csv
-#fname = paste0("~/API_testing/", accession, "_XY", ".csv")
-#write.csv(df, file = fname)
-readr::write_csv(MGYS00000974, path = "inst/extdata/MGYS00000974.csv")
-
+#save file
+readr::write_csv(MGYS00000974, path = "/home/$USER/scpackage/inst/extdata/MGYS00000974.csv")
 usethis::use_data(MGYS00000974)
+
+return(MGYS00000974)
+}
+
+get_MGYS00000974()

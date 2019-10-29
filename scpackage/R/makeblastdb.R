@@ -10,9 +10,8 @@
 #' @examples
 #' makeblastdb("inst/extdata/GCA_002277835.1_ASM227783v1_genomic.fna", "IR1_nucl_db", "nucl")
 makeblastdb <- function(input, out, dbtype){
-  makeblastdb = "inst/programs/ncbi-blast-2.9.0+/bin/makeblastdb"
   #run makeblastdb
-  command = paste0(makeblastdb, " -in ", input, " -out ", out, " -parse_seqids ", " -dbtype ", dbtype)
+  command = paste0("makeblastdb", " -in ", input, " -out ", out, " -parse_seqids ", " -dbtype ", dbtype)
   system(command, wait = TRUE)
 
   #moving files
@@ -34,5 +33,5 @@ makeblastdb <- function(input, out, dbtype){
 }
 
 #creating blast database from IR1 genome nucleotides
-makeblastdb("inst/extdata/GCA_002277835.1_ASM227783v1_genomic.fna", "IR1_nucl_db", "nucl")
+makeblastdb(input = "inst/extdata/GCA_002277835.1_ASM227783v1_genomic.fna", out = "IR1_nucl_db", dbtype = "nucl")
 

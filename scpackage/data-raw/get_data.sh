@@ -55,6 +55,8 @@ gunzip $RESEARCH_DRIVE/IR1/GCA_002277835.1_ASM227783v1_genomic.gtf.gz
 ##################################################
 #getting compost metagenomes with M17 blast hit
 ##################################################
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate sratoolkit
 
 if [[ -e $RESEARCH_DRIVE/samples/compost_genomes ]]; then
 echo "WARNING: File directory samples/compost_genomes already exists, no new directory will be created!"

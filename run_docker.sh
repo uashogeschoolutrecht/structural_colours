@@ -16,7 +16,7 @@
 #sudo docker build --rm --force-rm -t rstudio/pack-testing1 .
 
 PACK_DIR=${PWD}/scpackage
-sudo docker run -d --rm -p 28787:8787 --name geo_testing -e USERID=$UID -e PASSWORD=SoSecret -v $PACK_DIR:/home/rstudio/scpackage -v /home/patty_rosendaal/research_drive:/home/rstudio/research_drive rstudio/pack-testing19
+sudo docker run -d --rm -p 28787:8787 --name geo_testing -e USERID=$UID -e PASSWORD=SoSecret -v $PACK_DIR:/home/rstudio/scpackage -v /home/patty_rosendaal/research_drive:/home/rstudio/research_drive rstudio/pack-testing42
 
 #sudo docker exec -it <container-id> bash
 #adduser <username>

@@ -15,6 +15,6 @@ concatenate_fastq_qualities = function(file_lines) {
     quals_concat = append(quals_concat, qual)
   }
   quals_concat = quals_concat[-1]
-  quals_concat = paste(quals_concat, sep="", collapse="") 
+  quals_concat = paste(quals_concat, sep="", collapse="")
   return(quals_concat)
 }

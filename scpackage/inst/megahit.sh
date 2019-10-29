@@ -4,24 +4,23 @@
 # Author: Patty Rosendaal
 # Date: 16-Oct-2019
 
-
-###   Preparing data  ###
-# Get SRA file
-if [ ! -f ./SRR7778149.1 ]; then
-    wget https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos/sra-pub-run-1/SRR7778149/SRR7778149.1
-fi
-# Dumping fastq files
-if [ ! -f ./SRR7778149.1_1.fastq ]; then
-    echo "Dumping and splitting fastq files in working directory:"
-    fastq-dump --split-files SRR7778149.1
-fi
-# Specifying samples to use
-SAMPLE11="/home/patty_rosendaal/compost_genome/SRR7778149.1_1.fastq"
-SAMPLE12="/home/patty_rosendaal/compost_genome/SRR7778149.1_2.fastq"
-
+#activate environment
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate megahit
 # Test if active
 megahit -v
 
+if [ ! -d /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit ]; then
+    mkdir /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit
+fi
 
-###   Run megahit   ###
-megahit -1 $SAMPLE11 -2 $SAMPLE12 -o sample_1_megahit
+for i in ERR{833272..833285}; do
+mkdir /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit/$i
+
+megahit -1 /home/$USER/research_drive/geodescent/samples/MGYS00000974/trimmed/$i\_forward_unpaired.fq.gz \
+-2 /home/$USER/research_drive/geodescent/samples/MGYS00000974/trimmed/$i\_reverse_unpaired.fq.gz \
+--out-dir /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit/$i
+
+megahit -r research_drive/geodescent/samples/MGYS00000974/trimmed/$i\_out.fq.gz \
+--out-dir /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit/$i
+done
