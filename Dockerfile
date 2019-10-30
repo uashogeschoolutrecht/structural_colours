@@ -99,3 +99,21 @@ RUN apt-get install -y liblist-moreutils-perl && \
     apt-get install libmath-random-mt-perl
 
 #https://hub.docker.com/r/rocker/shiny/dockerfile
+
+###################################
+#   Mounting research drive
+###################################
+# INSTALL RCLONE
+#RUN wget https://downloads.rclone.org/v1.50.0/rclone-v1.50.0-linux-amd64.zip && \
+#    unzip rclone-v1.50.0-linux-amd64.zip
+#INSTALL FUSERMOUNT
+#RUN apt-get update && \
+#    apt-get install -y fuse && \
+#    apt-get install -y libfuse-dev
+#RUN apt-get install -y kmod
+#RUN depmod -ae $(uname -r)
+#RUN modprobe fuse
+#RUN mkdir /root/.config/rclone
+#COPY ./DockerConfig/config/rclone.conf /root/.config/rclone/rclone.conf
+#RUN mkdir /home/$USER/research_drive
+#RUN /rclone-v1.50.0-linux-amd64/rclone mount --use-cookies HPC_cloud: /home/$USER/research_drive
