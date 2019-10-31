@@ -167,6 +167,8 @@ df2$NCBI_sample_classification <- unlist(NCBI_sample_classification)
 df2$instrument_model <- unlist(instrument_model)
 df2$ENA_checklist <- unlist(ENA_checklist)
 
+df2 = cbind(df, df2)
+
 MGYS00000974 <- df2
 
 #save file
