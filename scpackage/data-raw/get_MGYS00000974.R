@@ -148,30 +148,30 @@ for(samplenumber in 1:277){
 }
 
 #GDAL X = lon, Y = lat
-df$X <- unlist(longtitude)
-df$Y <- unlist(latitude)
-df$silicate_umol/L <- unlist(silicate)
-df$temperature_&deg;C <- unlist(temperature)
-df$depth_m <- unlist(depth)
-df$region <- unlist(region)
-df$collection_date <- unlist(collection_date)
-df$environment_biome <- unlist(environment_biome)
-df$environment_feature <- unlist(environment_feature)
-df$environmental_package <- unlist(environmental_package)
-df$chlorophyll_mg/m3 <- unlist(chlorophyll)
-df$dissolved_oxygen_mg/L <- unlist(dissolved_oxygen)
-df$nitrate_umol/L <- unlist(nitrate)
-df$phosphate_umol/L <- unlist(phosphate)
-df$salinity_ppt <- unlist(salinity)
-df$NCBI_sample_classification <- unlist(NCBI_sample_classification)
-df$instrument_model <- unlist(instrument_model)
-df$ENA_checklist <- unlist(ENA_checklist)
+df2 = data.frame("X" = unlist(longtitude))
+df2$Y <- unlist(latitude)
+df2$silicate_umol/L <- unlist(silicate)
+df2$temperature_&deg;C <- unlist(temperature)
+df2$depth_m <- unlist(depth)
+df2$region <- unlist(region)
+df2$collection_date <- unlist(collection_date)
+df2$environment_biome <- unlist(environment_biome)
+df2$environment_feature <- unlist(environment_feature)
+df2$environmental_package <- unlist(environmental_package)
+df2$chlorophyll_mg/m3 <- unlist(chlorophyll)
+df2$dissolved_oxygen_mg/L <- unlist(dissolved_oxygen)
+df2$nitrate_umol/L <- unlist(nitrate)
+df2$phosphate_umol/L <- unlist(phosphate)
+df2$salinity_ppt <- unlist(salinity)
+df2$NCBI_sample_classification <- unlist(NCBI_sample_classification)
+df2$instrument_model <- unlist(instrument_model)
+df2$ENA_checklist <- unlist(ENA_checklist)
 
-MGYS00000974 <- df
+MGYS00000974 <- df2
 
 #save file
-readr::write_csv(MGYS00000974, path = "/home/$USER/scpackage/inst/extdata/MGYS00000974.csv")
-usethis::use_data(MGYS00000974)
+write.csv(MGYS00000974, file = "/home/rstudio/scpackage/inst/extdata/MGYS00000974.csv")
+usethis::use_data(MGYS00000974, overwrite = TRUE)
 
 return(MGYS00000974)
 }
