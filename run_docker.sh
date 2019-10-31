@@ -17,7 +17,7 @@
 # docker volume create --driver sapk/plugin-rclone --opt config="$(base64 ~/.config/rclone/rclone.conf)" --opt remote=HPC_cloud: --name research_drive
 PASSWD=SoSecret
 PACK_DIR=${PWD}/scpackage
-DRIVE_DIR=/home/patty_rosendaal/research_drive
+DRIVE_DIR=/home/patty_rosendaal/local_storage
 
 sudo docker run -d --rm -p 28787:8787 --name geo_testing -e USERID=$UID -e PASSWORD=$PASSWD \
 -v $PACK_DIR:/home/rstudio/scpackage -v $DRIVE_DIR:/home/rstudio/research_drive rstudio/pack-testing56

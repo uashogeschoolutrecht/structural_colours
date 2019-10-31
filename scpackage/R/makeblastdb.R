@@ -15,7 +15,7 @@ makeblastdb <- function(input, out, dbtype){
   system(command, wait = TRUE)
 
   #moving files
-  to = paste0("data/", out)
+  to = paste0("/home/$USER/research_drive/geodescent/samples/MGYS00000974/blast/", out)
   create_to = paste0("mkdir", " ", to)
   system(create_to)
   command1 <- paste0("mv ", out, ".nin", " ", to)
@@ -33,5 +33,6 @@ makeblastdb <- function(input, out, dbtype){
 }
 
 #creating blast database from IR1 genome nucleotides
-makeblastdb(input = "inst/extdata/GCA_002277835.1_ASM227783v1_genomic.fna", out = "IR1_nucl_db", dbtype = "nucl")
+makeblastdb(input = "/home/$USER/research_drive/geodescent/IR1/GCA_002277835.1_ASM227783v1_genomic.fna", out = "IR1_nucl_db", dbtype = "nucl")
 
+makeblastdb(input = "/home/$USER/research_drive/geodescent/samples/MGYS00000974/blast/contigs/all_samples3.fa", out = "megahit_untrimmed2", dbtype = "nucl")
