@@ -1,13 +1,12 @@
 # Base image https://hub.docker.com/u/rocker/
 FROM rocker/geospatial
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ncbi-blast+ && \
+    apt-get install -y perl
+
 RUN wget http://downloads.sourceforge.net/project/bbmap/BBMap_38.69.tar.gz -O /tmp/BBMap && \
     tar -xvzf /tmp/BBMap -C /opt/ && rm /tmp/BBMap
-
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    ncbi-blast+
-
 
 ## Copy requirements.R to container directory /tmp
 COPY ./DockerConfig/requirements.R /tmp/requirements.R
@@ -39,7 +38,7 @@ RUN conda update conda -y
 RUN conda install conda-build -y
 RUN conda install anaconda-client -y
 
-RUN conda create -n q2-metaphlan2 -c fasnicar -c bioconda q2-metaphlan2
+#RUN conda create -n q2-metaphlan2 -c fasnicar -c bioconda q2-metaphlan2
 
 RUN wget https://data.qiime2.org/distro/core/qiime2-2019.7-py36-linux-conda.yml && \
     conda env create -n qiime2-2019.7 --file qiime2-2019.7-py36-linux-conda.yml && \
@@ -52,8 +51,10 @@ RUN wget http://cab.spbu.ru/files/release3.12.0/SPAdes-3.12.0-Linux.tar.gz && \
 
 RUN conda create -n megahit -c bioconda megahit
 
-RUN wget https://netcologne.dl.sourceforge.net/project/biogrinder/biogrinder/Grinder-0.5.4/Grinder-0.5.4.tar.gz && \
-    tar -xzf Grinder-0.5.4.tar.gz
+#RUN wget https://netcologne.dl.sourceforge.net/project/biogrinder/biogrinder/Grinder-0#.5.4/Grinder-0.5.4.tar.gz && \
+#    tar -xzf Grinder-0.5.4.tar.gz && \
+#    perl -y /Grinder-0.5.4/Makefile.PL
+#    #make --makefile /Grinder-0.5.4/Makefile.PL
     
 MAINTAINER biocontainers <biodocker@gmail.com>
 LABEL    software="grinder" \ 
@@ -89,14 +90,19 @@ RUN wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.
 RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip && \
     unzip Trimmomatic-0.39.zip
 
-RUN echo "export PATH=/SPAdes-3.12.0-Linux/bin:/opt/bbmap:/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
+RUN echo "export PATH=/bin:/SPAdes-3.12.0-Linux/bin:/opt/bbmap:/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
 RUN echo "export TMPDIR=/tmp" >> /etc/bash.bashrc
 RUN touch /home/$USER/.Renviron
 RUN echo "R_LIBS=/opt/conda/envs/qiime2-2019.7/lib/R/library:\${R_LIBS}" >> /home/$USER/.Renviron
 
 RUN apt-get update
-RUN apt-get install -y liblist-moreutils-perl && \
-    apt-get install libmath-random-mt-perl
+RUN apt-get install -y perl && \
+    apt-get install -y liblist-moreutils-perl && \
+    apt-get install -y libmath-random-mt-perl && \
+    apt-get install -y libbio-perl-perl && \
+    apt-get install -y libgetopt-euclid-perl
+    
+
 
 #https://hub.docker.com/r/rocker/shiny/dockerfile
 

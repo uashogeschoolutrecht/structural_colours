@@ -9,27 +9,17 @@
 #'
 #' @examples
 #' makeblastdb("inst/extdata/GCA_002277835.1_ASM227783v1_genomic.fna", "IR1_nucl_db", "nucl")
-makeblastdb <- function(input, out, dbtype){
+makeblastdb <- function(input, outname, outdir, dbtype){
   #run makeblastdb
-  command = paste0("makeblastdb", " -in ", input, " -out ", out, " -parse_seqids ", " -dbtype ", dbtype)
+  command = paste0("makeblastdb", " -in ", input, " -out ", outname, " -parse_seqids ", " -dbtype ", dbtype)
   system(command, wait = TRUE)
 
   #moving files
-  to = paste0("/home/$USER/research_drive/geodescent/samples/MGYS00000974/blast/", out)
+  to = paste0(outdir, outname)
   create_to = paste0("mkdir", " ", to)
   system(create_to)
-  command1 <- paste0("mv ", out, ".nin", " ", to)
-  command2 <- paste0("mv ", out, ".nhr", " ", to)
-  command3 <- paste0("mv ", out, ".nsq", " ", to)
-  command4 <- paste0("mv ", out, ".nsi", " ", to)
-  command5 <- paste0("mv ", out, ".nsd", " ", to)
-  command6 <- paste0("mv ", out, ".nog", " ", to)
+  command1 <- paste0("mv ", outname, ".*", " ", to)
   system(command1)
-  system(command2)
-  system(command3)
-  system(command4)
-  system(command5)
-  system(command6)
 }
 
 #creating blast database from IR1 genome nucleotides

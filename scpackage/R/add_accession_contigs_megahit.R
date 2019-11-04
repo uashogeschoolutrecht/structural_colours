@@ -15,33 +15,42 @@
 #'                               sample_nums_from = 833272,
 #'                               sample_nums_to = 833616,
 #'                               outfile = "/home/$USER/research_drive/geodescent/samples/MGYS00000974/blast/contigs/all_samples2.fa")
-add_accession_contigs_megahit = function(samples_dir, sra_sampletype, sample_nums_from, sample_nums_to, outfile){
-if (!file.exists(paste0(samples_dir, "blast"))){
-  command = paste0(paste0(samples_dir, "blast"))
-  system(command)
-} else {
-  print("Output dir blast exists")
-}
-  if (!file.exists(paste0(samples_dir, "blast/contigs"))){
-  command = paste0(paste0(samples_dir, "blast/contigs"))
-  system(command)
-} else {
-  print("Output dir contigs exists")
-}
+add_accession_contigs_megahit = function(samples_dir,
+                                         sra_sampletype,
+                                         sample_nums_from,
+                                         sample_nums_to,
+                                         outfile) {
+  if (!file.exists(paste0(samples_dir, "blast"))) {
+    command = paste0("mkdir ", samples_dir, "blast")
+    system(command)
+  } else {
+    print("Output dir blast exists")
+  }
+  if (!file.exists(paste0(samples_dir, "blast/contigs"))) {
+    command = paste0("mkdir ", samples_dir, "blast/contigs")
+    system(command)
+  } else {
+    print("Output dir contigs exists")
+  }
 
-samples = ""
-for (num in seq(from = sample_nums_from, to = sample_nums_to, by = 1)){
-  accession = paste0(sra_sampletype, as.character(num))
-  samples = append(samples, accession)
-  path_to_contigs = paste0(samples_dir, "megahit/", accession, "/final.contigs.fa")
-  command = paste0("sed 's/>.*/", ">",accession, "_&/' ", path_to_contigs, " >>", outfile)
-  system(command)
-}
+  samples = ""
+  for (num in seq(from = sample_nums_from, to = sample_nums_to, by = 1)) {
+    accession = paste0(sra_sampletype, as.character(num))
+    samples = append(samples, accession)
+    path_to_contigs = paste0(
+      samples_dir,
+      "megahit/",
+      accession,
+      "/final.contigs.fa"
+    )
+    command = paste0("sed 's/>/",
+                     ">",
+                     accession,
+                     "/' ",
+                     path_to_contigs,
+                     " >> ",
+                     outfile)
+    system(command)
+  }
 }
 #sed 's/>.*/phosphate_&/' foo.in >bar.out
-
-add_accession_contigs_megahit(samples_dir = "/home/$USER/research_drive/geodescent/samples/MGYS00000974/",
-                              sra_sampletype = "ERR",
-                              sample_nums_from = 833272,
-                              sample_nums_to = 833616,
-                              outfile = "/home/$USER/research_drive/geodescent/samples/MGYS00000974/blast/contigs/all_samples3.fa")

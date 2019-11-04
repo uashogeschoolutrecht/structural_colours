@@ -56,6 +56,7 @@ gunzip $RESEARCH_DRIVE/IR1/GCA_002277835.1_ASM227783v1_genomic.gtf.gz
 #getting compost metagenomes with M17 blast hit
 ##################################################
 source ~/anaconda3/etc/profile.d/conda.sh
+source /opt/conda/etc/profile.d/conda.sh
 conda activate sratoolkit
 
 if [[ -e $RESEARCH_DRIVE/samples/compost_genomes ]]; then
@@ -88,3 +89,25 @@ rm SRR7778152.1
 mv SRR7778152.1* $RESEARCH_DRIVE/samples/compost_genomes/
 
 #hit 5 is a protein from the same metagenome as hit 2, does hit 2 metagenome contain both gliding genes or analysis error?
+#SRR7778147 - SRR7778164 all compost wgs from https://www.ebi.ac.uk/ena/data/view/PRJNA488358
+for i in SRR{7778147..7778164}; do
+wget https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos/sra-pub-run-1/${i}/${i}.1
+mv ${i}.1 $RESEARCH_DRIVE/samples/compost_genomes/
+done
+
+for i in SRR{7778147..7778164}; do
+fastq-dump --split-files $RESEARCH_DRIVE/samples/compost_genomes/${i}.1
+done
+
+
+#getting urban data
+if [[ -e $RESEARCH_DRIVE/samples/MGYS00005036 ]]; then
+echo "WARNING: File directory samples/MGYS00005036 already exists, no new directory will be created!"
+else mkdir $RESEARCH_DRIVE/samples/MGYS00005036
+fi
+for i in SRR{6231130..6231221}; do
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623/$i/$i\_1.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623/$i/$i\_2.fastq.gz
+mv $i\_1.fastq.gz $RESEARCH_DRIVE/samples/MGYS00005036
+mv $i\_2.fastq.gz $RESEARCH_DRIVE/samples/MGYS00005036
+done

@@ -19,8 +19,8 @@ PASSWD=SoSecret
 PACK_DIR=${PWD}/scpackage
 DRIVE_DIR=/home/patty_rosendaal/local_storage
 
-sudo docker run -d --rm -p 28787:8787 --name geo_testing -e USERID=$UID -e PASSWORD=$PASSWD \
--v $PACK_DIR:/home/rstudio/scpackage -v $DRIVE_DIR:/home/rstudio/research_drive rstudio/pack-testing56
+sudo docker run -d --rm -p 28786:8787 --name geo_testing2 -e USERID=$UID -e PASSWORD=$PASSWD \
+-v $PACK_DIR:/home/rstudio/scpackage -v $DRIVE_DIR:/home/rstudio/research_drive rstudio/pack-testing64
 
 #
 
