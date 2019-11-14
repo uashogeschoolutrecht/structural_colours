@@ -77,10 +77,8 @@ for (sample_num in 1:length(sample_metadata)){
   MGYS00005036 <- df2
 
   #save file
-  #write.csv(MGYS00005036, file = "/inst/extdata/MGYS00005036.csv")
+  write.csv(MGYS00005036, file = "inst/extdata/MGYS00005036.csv")
   usethis::use_data(MGYS00005036, overwrite = TRUE)
 
   return(MGYS00005036)
 }
-
-df <- get_MGYS00005036()

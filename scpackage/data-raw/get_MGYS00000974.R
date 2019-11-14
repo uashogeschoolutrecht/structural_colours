@@ -178,4 +178,3 @@ usethis::use_data(MGYS00000974, overwrite = TRUE)
 return(MGYS00000974)
 }
 
-get_MGYS00000974()

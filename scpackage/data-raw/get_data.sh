@@ -111,3 +111,16 @@ wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623/$i/$i\_2.fastq.gz
 mv $i\_1.fastq.gz $RESEARCH_DRIVE/samples/MGYS00005036
 mv $i\_2.fastq.gz $RESEARCH_DRIVE/samples/MGYS00005036
 done
+
+
+#getting arctic data
+if [[ -e $RESEARCH_DRIVE/samples/MGYS00005036 ]]; then
+echo "WARNING: File directory samples/MGYS00005036 already exists, no new directory will be created!"
+else mkdir $RESEARCH_DRIVE/samples/MGYS00005036
+fi
+for i in SRR{6231130..6231221}; do
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623/$i/$i\_1.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR623/$i/$i\_2.fastq.gz
+mv $i\_1.fastq.gz $RESEARCH_DRIVE/samples/MGYS00005036
+mv $i\_2.fastq.gz $RESEARCH_DRIVE/samples/MGYS00005036
+done

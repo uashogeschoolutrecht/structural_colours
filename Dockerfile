@@ -106,20 +106,20 @@ RUN apt-get install -y perl && \
 
 #https://hub.docker.com/r/rocker/shiny/dockerfile
 
-###################################
-#   Mounting research drive
-###################################
-# INSTALL RCLONE
-#RUN wget https://downloads.rclone.org/v1.50.0/rclone-v1.50.0-linux-amd64.zip && \
-#    unzip rclone-v1.50.0-linux-amd64.zip
-#INSTALL FUSERMOUNT
-#RUN apt-get update && \
-#    apt-get install -y fuse && \
-#    apt-get install -y libfuse-dev
-#RUN apt-get install -y kmod
-#RUN depmod -ae $(uname -r)
-#RUN modprobe fuse
-#RUN mkdir /root/.config/rclone
-#COPY ./DockerConfig/config/rclone.conf /root/.config/rclone/rclone.conf
-#RUN mkdir /home/$USER/research_drive
-#RUN /rclone-v1.50.0-linux-amd64/rclone mount --use-cookies HPC_cloud: /home/$USER/research_drive
+RUN conda create -n krona -c bioconda krona 
+
+RUN conda create -n prokka -c conda-forge -c bioconda -c defaults prokka
+
+RUN apt-get update && \
+    apt-get install -y build-essential libboost-all-dev git cmake curl libncurses5-dev zlib1g-dev
+
+RUN conda create -n metabat2 -c bioconda metabat2
+#RUN git clone https://bitbucket.org/berkeleylab/metabat.git
+#RUN cd metabat && \
+#    mkdir build && \
+#    cd build && \
+#    cmake -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
+#    make -j8 && \
+#    make install && \
+#    cd .. && \
+#    rm -rf build
