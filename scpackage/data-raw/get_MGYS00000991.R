@@ -8,7 +8,7 @@
 #'
 #'
 #'
-get_MGYS00005036 = function() {
+get_MGYS00000991 = function() {
   # load libraries, use install.packages(library) if not installed
 
   library("rjsonapi")
@@ -58,7 +58,7 @@ fdf$temperature[which(fdf$temperature == "-999.0")] <- NA
   names(MGYS00000991)[names(MGYS00000991) == "geographic location (latitude)"] <- "Y"
 
   #save file
-  write.csv(MGYS00000991, file = "inst/extdata/MGYS00000991.csv")
+  write.csv(MGYS00000991, file = "extdata/MGYS00000991.csv")
   usethis::use_data(MGYS00000991, overwrite = TRUE)
 names(MGYS00000991)
 
@@ -67,7 +67,7 @@ y = subset(df2, !`geographic location (longitude)` %in% x$`geographic location (
 
 names(y)[names(y) == "geographic location (longitude)"] <- "X"
 names(y)[names(y) == "geographic location (latitude)"] <- "Y"
-write.csv(y, file = "inst/extdata/MGYS00000991_clean.csv")
+write.csv(y, file = "extdata/MGYS00000991_clean.csv")
   return(MGYS00000991)
 }
 

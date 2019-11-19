@@ -172,7 +172,7 @@ df2 = cbind(df, df2)
 MGYS00000974 <- df2
 
 #save file
-write.csv(MGYS00000974, file = "/home/rstudio/scpackage/inst/extdata/MGYS00000974.csv")
+write.csv(MGYS00000974, file = "extdata/MGYS00000974.csv")
 usethis::use_data(MGYS00000974, overwrite = TRUE)
 
 return(MGYS00000974)

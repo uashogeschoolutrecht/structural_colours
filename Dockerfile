@@ -1,5 +1,5 @@
 # Base image https://hub.docker.com/u/rocker/
-FROM rocker/geospatial
+FROM rocker/geospatial:3.6.1
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ncbi-blast+ && \

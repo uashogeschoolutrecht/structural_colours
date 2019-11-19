@@ -1,0 +1,207 @@
+---
+title: "Pipeline structural colour project"
+output: html_document
+---
+
+## This rmd file contains a workflow for the colour map project
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+This following code block is to quickly check if a wgs dataset contains the marker genes supplied.
+```{r}
+#get files
+#system("nohup bash /home/$USER/scpackage/data-raw/get_data.sh")
+
+#assemble fastq's
+#system("nohup bash /home/$USER/scpackage/inst/megahit.sh")
+
+#get contigs in one fasta
+add_accession_contigs_megahit(samples_dir = "/home/$USER/data/geodescent/samples/MGYS00000991/",
+                              sra_sampletype = "ERR",
+                              sample_nums_from = 1424899,
+                              sample_nums_to = 1424903,
+                              outfile = "/home/$USER/data/geodescent/samples/MGYS00000991/blast/contigs/arctic1.fa")
+
+#create blast db
+makeblastdb(input = "/home/$USER/data/geodescent/samples/MGYS00000991/blast/contigs/arctic1.fa", 
+            outname = "megahit_untrimmed_1", 
+            outdir = "/home/$USER/data/geodescent/samples/MGYS00000991/blast/",
+            dbtype = "nucl")
+
+
+#run blast against db
+blast(blast = "tblastn",
+      blast_db = "/home/rstudio/data/geodescent/samples/MGYS00000991/blast/megahit_untrimmed_1/megahit_untrimmed_1",
+      input = "/home/rstudio/scpackage/inst/extdata/M17.txt",
+      out = "/home/rstudio/data/geodescent/samples/MGYS00000991/blast/test_tblastn_arctic1a",
+      format = 6)
+
+blast(blast = "tblastn",
+      blast_db = "/home/rstudio/data/geodescent/samples/MGYS00000991/blast/megahit_untrimmed_1/megahit_untrimmed_1",
+      input = "/home/rstudio/scpackage/inst/extdata/gldiB.txt",
+      out = "/home/rstudio/data/geodescent/samples/MGYS00000991/blast/test_tblastn_arctic1b",
+      format = 6)
+```
+
+## Loading in the data
+
+We begin by loading in the filereports of the studies of interest. The url of a filereport of a study can be gotten from the corresponding ebi metagenomic website by saving the link address of the 'TEXT' button (e.g. see https://www.ebi.ac.uk/ena/data/view/PRJEB8968)
+```{r}
+#getting filereports
+#they are saved as rda files in inst/extdata named filereport_accession
+
+#MGYS00000974 ocean cruise
+get_filereport(url = "https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJEB8968&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt",
+               acc = "PRJEB8968")
+
+#MGYS00005036 urban
+get_filereport(url = "https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJEB26733&result=analysis&fields=analysis_accession,study_accession,sample_accession,secondary_sample_accession,tax_id,scientific_name,submitted_ftp,submitted_galaxy&download=txt",
+               acc = "PRJEB26733")
+
+#MGYS00005036 urban
+get_filereport(url = "https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJNA415974&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt",
+               acc = "PRJNA415974")
+
+#MGYS00000991 arctic
+get_filereport(url = "https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJEB14154&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt",
+               acc = "PRJEB14154")
+
+#test
+get_filereport(url = "https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJEB4331&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_bytes,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt",
+               acc = "PRJEB4331")
+```
+
+Next we need to get the fastq files of the studies. This is done using the filereport content so it is important to load those in first.
+```{r}
+#loading in filereports
+load("extdata/filereport_PRJNA415974")
+f1 = filereport
+rm(filereport)
+load("extdata/filereport_PRJEB26733")
+f2 = filereport
+rm(filereport)
+
+load("extdata/filereport_PRJEB4331")
+```
+
+Now that the filereports have been loaded the fastq files can be downloaded, this can be done using the function get_fastq(). There is also a bash script available (get_data.sh) but this does not get the arctic dataset and cannot be given arguments to download different data.
+```{r}
+#getting fastq files
+#system("nohup bash /home/$USER/scpackage/data-raw/get_data.sh")
+get_fastq(filereport = filereport,
+          outdir = "/home/rstudio/data/geodescent/samples/TEST")
+```
+
+For the specific projects of interest scripts have been written to collect and also parse the columns. To get the metadata for different datasets the function get_metadata() can be used.
+```{r}
+#getting metadata tables
+#general function get_metadata()
+get_MGYS00000991()
+get_MGYS00000974()
+get_MGYS00005036()
+```
+
+## Spiking with known positive genome
+
+To be sure that our pipeline will be able to identify the marker genes, a genome which is known to contain the marker genes can be used to generate fake reads which can be appended to the fastq file of a metagenome to spike it. Grinder 0.5.4 can be used to generate reads from a genome. An abundances file can be supplied, keeping this empty will use equal percentages for each contig of the reference. Here we use the IR1 genome to generate reads using a 20x coverage to capture the genes in the reads multiple times, this will also improve the assembly.
+```{r}
+grinder(reference_file = "/home/$USER/scpackage/inst/extdata/GCA_002277835.1_ASM227783v1_genomic.fna",
+        abundance_file = "",
+        outname = "IR1_grinder",
+        outdir = "/home/$USER/data/geodescent/grinder",
+        coverage = 20)
+
+# spiking a negative arctic sample
+append_fastq_to_fastq(file_one = "/home/$USER/data/geodescent/grinder/IR1_grinder-reads.fastq",
+                      file_two = "/home/$USER/data/geodescent/samples/MGYS00000991/ERR1424899_1.fastq.gz",
+                      outdir = "/home/$USER/data/geodescent/grinder/",
+                      outname = "ERR1424899_1-spiked.fastq")
+append_fastq_to_fastq(file_one = "/home/$USER/data/geodescent/grinder/IR1_grinder-reads.fastq",
+                      file_two = "/home/$USER/data/geodescent/samples/MGYS00000991/ERR1424899_2.fastq.gz",
+                      outdir = "/home/$USER/data/geodescent/grinder/",
+                      outname = "ERR1424899_2-spiked.fastq")
+```
+
+## Quality control and trimming
+
+Sequencing machines bring errors into the reads, particularly at the ends. To trim off bad ends trimmomatic can be used. This can also trim off remaining adapter sequences. First, the read quality can be visualized using FastQC to check for adapters. Then using trimmomatic adapters can be removed and a minimum length and quality window can be applied. 
+```{r}
+## run fastqc
+
+#trim sequences
+run_trimmomatic(mode = "PE",
+                f1 = "/home/$USER/data/geodescent/samples/MGYS00000991/ERR1424899_1.fastq.gz",
+                f2 = "/home/$USER/data/geodescent/samples/MGYS00000991/ERR1424899_2.fastq.gz",
+                outdir = "/home/$USER/test_trimming",
+                prefix = "ERR1424899")
+```
+
+## Assembly
+
+To be able to use the sequences they need to be assembled. This will reconstruct the genomes so that coding sequences will be less fragmented, which makes it easier to identify whole genes.
+```{r}
+run_megahit(script_path = "/home/$USER/scpackage/inst/megahit.sh",
+            r1 = "/home/$USER/test_trimming/ERR1424899_1P",
+            r2 = "/home/$USER/test_trimming/ERR1424899_2P",
+            outdir = "/home/$USER",
+            outname = "megahit_testing")
+
+add_accession_contigs_megahit(megahit_outdir = "/home/$USER/megahit_testing",
+                               prefix = "ERR1424899",
+                               outfile = "/home/$USER/renamed_contigs.fa")
+
+```
+
+## Mapping reads to contigs
+
+Reads can be mapped back to the contigs to assess the coverage. High and equal coverage indicate a good assembly. To do this, the bbmap program can be used. 
+```{r, echo=TRUE, include =TRUE}
+run_bbmap(read1 = "/home/$USER/test_trimming/ERR1424899_1P",
+          read2 = "/home/$USER/test_trimming/ERR1424899_2P",
+          ref = "/home/$USER/renamed_contigs.fa",
+          outdir = "/home/$USER/bbmap_test")
+```
+
+## Binning
+To bin the sequences by taxonomic group, metabat can be used.
+```{r}
+run_metabat2(metabat_script = "/home/$USER/scpackage/inst/metabat2.sh",
+             s_bam = "/home/$USER/bbmap_test/mapped_sorted.bam",
+             fasta = "/home/$USER/renamed_contigs.fa",
+             outdir = "/home/$USER/metabat_test")
+```
+
+Taxonomic classification of bins and total sample
+```{r}
+
+```
+
+Add bin number and species to headers of contigs
+```{r}
+
+```
+
+Blast marker genes
+```{r}
+
+```
+
+Annotation and COG enrichment analysis
+```{r}
+
+```
+
+Adding taxonomy, enrichment results, blast results and function annotation to metadata table
+```{r}
+
+```
+
+Create classifier
+```{r}
+
+```
+
+Plot samples and metadata in shiny app
+```{r}
+```

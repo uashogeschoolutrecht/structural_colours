@@ -1,13 +1,10 @@
-#' This functions uses the MGnify API to connect to ebi to collect the metadata for jcraig cruise MGYS00000974.
+#' This functions uses the MGnify API to connect to ebi to collect the metadata for MGYS00005036
 #'
-#' @return Data frame samples and metadata 277 x 22
+#' @return Data frame metadata
 #' @export
 #'
 #' @examples
-#' get_MGYS00000974()
-#'
-#'
-#'
+#' get_MGYS00005036()
 get_MGYS00005036 = function() {
   # load libraries, use install.packages(library) if not installed
 
@@ -77,7 +74,7 @@ for (sample_num in 1:length(sample_metadata)){
   MGYS00005036 <- df2
 
   #save file
-  write.csv(MGYS00005036, file = "inst/extdata/MGYS00005036.csv")
+  write.csv(MGYS00005036, file = "extdata/MGYS00005036.csv")
   usethis::use_data(MGYS00005036, overwrite = TRUE)
 
   return(MGYS00005036)

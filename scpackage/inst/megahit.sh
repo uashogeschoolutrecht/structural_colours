@@ -6,19 +6,37 @@ conda activate megahit
 # Test if active
 megahit -v
 
-if [ ! -d /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit ]; then
-    mkdir /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit
+
+#############
+# user input
+#############
+
+# input flag s (path) for single end and p for paired end (path1,path2), output name and main path dir
+while getopts s:p:o:n: aflag
+do
+case "${aflag}"
+in
+s) INPUT_SE=${OPTARG};;
+p) INPUT_PE=${OPTARG};;
+o) OUTDIR=${OPTARG};;
+n) OUTNAME=${OPTARG};;
+esac
+done
+#splitting paired reads file paths
+IFS=',' read -r PE_1 PE_2 <<< "$INPUT_PE"
+
+if [ ! -d ${OUTDIR} ]; then
+    mkdir ${OUTDIR}
 fi
 
-#-616
-for i in ERR{833272..833616}; do
-if [ -e research_drive/geodescent/samples/MGYS00000974/$i\_1.fastq.gz ]; then
-    megahit -1 /home/$USER/research_drive/geodescent/samples/MGYS00000974/$i\_1.fastq.gz \
-    -2 /home/$USER/research_drive/geodescent/samples/MGYS00000974/$i\_2.fastq.gz \
-    --out-dir /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit/$i
+# if paired end option used run paired end code
+if [ ! -z ${INPUT_PE+x} ]; then
+    megahit -1 ${PE_1} \
+    -2 ${PE_2} \
+    --out-dir ${OUTDIR}/${OUTNAME}
 fi
-if [ -e research_drive/geodescent/samples/MGYS00000974/$i.fastq.gz ]; then
-    megahit -r research_drive/geodescent/samples/MGYS00000974/$i.fastq.gz \
-    --out-dir /home/$USER/research_drive/geodescent/samples/MGYS00000974/megahit/$i
+
+if [ ! -z ${INPUT_SE+x} ]; then
+    megahit -r ${INPUT_SE} \
+    --out-dir ${OUTDIR}/${OUTNAME}
 fi
-done

@@ -16,3 +16,4 @@ points(d.bin1, col='red', slice=1)
 multiBinPlot(d, d.bin1)
 plot(d.bin1)
 points(d.bin20,col="green",slice=1)
+#
