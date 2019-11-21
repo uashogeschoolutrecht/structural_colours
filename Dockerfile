@@ -1,5 +1,5 @@
 # Base image https://hub.docker.com/u/rocker/
-FROM rocker/geospatial:3.6.1
+FROM rocker/geospatial
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ncbi-blast+ && \
@@ -71,7 +71,7 @@ LABEL    software="grinder" \
     extra.binaries="/usr/bin/average_genome_size,/usr/bin/change_paired_read_orientation,/usr/bin/grinder" \ 
     about.tags=""
 
-USER root
+#USER root
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && (apt-get install -t buster-backports -y grinder || apt-get install -y grinder) && apt-get clean && apt-get purge && rm -rf /var/lib/apt/lists/* /tmp/*
 
