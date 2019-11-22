@@ -45,7 +45,7 @@ for (i in 1:length(sample_metadata)){
   new_df = as.data.frame(new_df)
   fdf = rbind.fill(fdf,new_df)
 }
-rownames(fdf) = sample_ids
+
 
 fdf$temperature[which(fdf$temperature == "-999.0")] <- NA
 
@@ -57,17 +57,16 @@ fdf$temperature[which(fdf$temperature == "-999.0")] <- NA
   names(MGYS00000991)[names(MGYS00000991) == "geographic location (longitude)"] <- "X"
   names(MGYS00000991)[names(MGYS00000991) == "geographic location (latitude)"] <- "Y"
 
-  #save file
-  write.csv(MGYS00000991, file = "extdata/MGYS00000991.csv")
-  usethis::use_data(MGYS00000991, overwrite = TRUE)
-names(MGYS00000991)
 
 x = df2[which(is.na(df2$`geographic location (longitude)`)),]
 y = subset(df2, !`geographic location (longitude)` %in% x$`geographic location (longitude)`)
 
 names(y)[names(y) == "geographic location (longitude)"] <- "X"
 names(y)[names(y) == "geographic location (latitude)"] <- "Y"
-write.csv(y, file = "extdata/MGYS00000991_clean.csv")
+
+MGYS00000991 = y
+names(MGYS00000991)[names(MGYS00000991) == "temperature"] <- "temperature_&deg;C"
+names(MGYS00000991)[names(MGYS00000991) == "depth"] <- "depth_m"
   return(MGYS00000991)
 }
 
