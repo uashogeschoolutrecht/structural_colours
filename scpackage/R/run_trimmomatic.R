@@ -19,45 +19,22 @@ run_trimmomatic = function(mode = "SE",
                            prefix = "trimmed",
                            phred = "33",
                            minlen = "90",
-                           window = "4:15") {
-  program = "java -jar /Trimmomatic-0.39/trimmomatic-0.39.jar"
+                           window = "4:15",
+                           logfile = "trimmomatic_log.txt") {
   if (mode == "SE") {
-    command = paste0(
-      program,
-      " ",
-      mode,
-      " ",
-      f1,
-      " ",
-      " -baseout ",
-      prefix,
-      " MINLEN:",
-      minlen,
-      " SLIDINGWINDOW:",
-      window,
-      " -phred",
-      phred
-    )
-    system(command)
+    args = c('-jar', '/Trimmomatic-0.39/trimmomatic-0.39.jar',
+             mode, f1, prefix, paste0("MINLEN:", minlen),
+             paste0("SLIDINGWINDOW:", window),
+             paste0("-phred", phred))
+    log = sys::exec_internal("java", args)
+    trim_stats = as_text(log$stderr)[4]
   } else {
-    command = paste0(
-      program,
-      " ",
-      mode,
-      " ",
-      f1,
-      " ",
-      f2,
-      " ",
-      " -baseout ",
-      prefix,
-      " MINLEN:",
-      minlen,
-      " SLIDINGWINDOW:",
-      window,
-      " -phred",
-      phred
-    )
-    system(command)
+    args = c('-jar', '/Trimmomatic-0.39/trimmomatic-0.39.jar',
+             mode, f1, f2, "-baseout", prefix, paste0("MINLEN:", minlen),
+             paste0("SLIDINGWINDOW:", window),
+             paste0("-phred", phred))
+    log = sys::exec_internal("java", args)
+    trim_stats = as_text(log$stderr)[4]
   }
+  return(trim_stats)
 }

@@ -6,7 +6,7 @@
 #' @param qual_levels Two quality values will be given: good / bad, default: "35 10"
 #' @param mutation_dist Default is for Illumina sequences
 #' @param outname Prefix name of output files
-#' @param outdir Directory (will be created) to store output files in
+#' @param outdir Directory to store output files in
 #' @param coverage Library coverage
 #'
 #' @return

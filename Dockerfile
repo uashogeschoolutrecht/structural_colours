@@ -83,9 +83,12 @@ RUN apt-get update && (apt-get install -t buster-backports -y grinder || apt-get
 #RUN wget https://downloads.sourceforge.net/project/quast/quast-5.0.2.tar.gz && \
 #    tar -xzf quast-5.0.2.tar.gz
 
+#RUN wget https://javadl.oracle.com/webapps/download/AutoDL?BundleId=240718_5b13a193868b4bf28bcb45c792fce896 && \
+#    tar -xvf jre* && \
     
 RUN wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.8.zip && \
-    unzip fastqc_v0.11.8.zip
+    unzip fastqc_v0.11.8.zip && \
+    chmod 755 FastQC/fastqc
 
 RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip && \
     unzip Trimmomatic-0.39.zip
