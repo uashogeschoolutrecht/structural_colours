@@ -29,7 +29,6 @@ fastqc_multisummary = function(results_dir) {
     geom_point(show.legend = FALSE) +
     facet_wrap(. ~ V3, ncol=5)
 
-  print(old_wd)
   setwd(old_wd)
   return(qc_plot)
 }

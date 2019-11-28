@@ -55,7 +55,6 @@ run_sc_pipeline = function(samples_dir) {
   system(command)
 
   fastqc_plot_untrimmed = fastqc_multisummary(results_dir = paste0(samples_dir, "/fastqc/untrimmed"))
-
   ##### -----------------------------------------------------------------------
 
   ##### Quality trimming -----------------------------------------------------------------------
@@ -70,16 +69,16 @@ run_sc_pipeline = function(samples_dir) {
   for (i in seq_along(samples_paths)) {
     path = samples_paths[i]
     name = samples[i]
-    #name = substr(name, 1, 9)
     if (grepl("_1.f", path) == TRUE){
       path2 = str_replace(path, pattern = "_1.f", replacement = "_2.f")
+      name1 = str_replace(name, pattern = "_1", replacement = "")
       trim_stat = run_trimmomatic(mode = "PE",
                       f1 = path,
                       f2 = path2,
-                      prefix = paste0("trimmed_", name))
+                      prefix = paste0("trimmed_", name1))
       trimmomatic_stats = append(trimmomatic_stats, trim_stat)
-      name = str_replace(name, pattern = "_1", replacement = "*(PE)")
-      trimmomatic_files = append(trimmomatic_files, name)
+      name2 = str_replace(name, pattern = "_1", replacement = "*(PE)")
+      trimmomatic_files = append(trimmomatic_files, name2)
     } else {
       if (grepl("_2.f", path) == FALSE){
         if (grepl("fastqc", path) == FALSE){
@@ -101,6 +100,12 @@ run_sc_pipeline = function(samples_dir) {
   trimmomatic_stats = unlist(trimmomatic_stats)
   trimmomatic_files = unlist(trimmomatic_files)
   trimmomatic_log = cbind(trimmomatic_files, trimmomatic_stats)
+  ##### ----------------------------------------------------------------------------------
+
+  ##### Assembly -------------------------------------------------------------------------
+  # to create longer contigs for less fragmented genes / better taxonomic assignment
+
+
 
 
 }
@@ -120,5 +125,7 @@ source("/home/rstudio/scpackage/R/get_MGYS00005036.R")
 source("/home/rstudio/scpackage/R/get_filereport.R")
 source("/home/rstudio/scpackage/R/get_fastq.R")
 source("/home/rstudio/scpackage/R/grinder.R")
+source("/home/rstudio/scpackage/R/run_fastqc.R")
+source("/home/rstudio/scpackage/R/fastqc_multisummary.R")
 source("/home/rstudio/scpackage/R/run_trimmomatic.R")
 run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/test_samples")
