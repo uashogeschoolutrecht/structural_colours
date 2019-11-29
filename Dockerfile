@@ -80,8 +80,8 @@ RUN apt-get update && (apt-get install -t buster-backports -y grinder || apt-get
 #RUN echo "export PERL5LIB=/usr/share/perl5:$PERL5LIB" >> /etc/bash.bashrc
 
 
-#RUN wget https://downloads.sourceforge.net/project/quast/quast-5.0.2.tar.gz && \
-#    tar -xzf quast-5.0.2.tar.gz
+RUN wget https://downloads.sourceforge.net/project/quast/quast-5.0.2.tar.gz && \
+    tar -xzf quast-5.0.2.tar.gz
 
 #RUN wget https://javadl.oracle.com/webapps/download/AutoDL?BundleId=240718_5b13a193868b4bf28bcb45c792fce896 && \
 #    tar -xvf jre* && \

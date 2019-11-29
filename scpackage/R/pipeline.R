@@ -122,6 +122,7 @@ run_sc_pipeline = function(samples_dir) {
   # to create longer contigs for less fragmented genes / better taxonomic assignment
   # creating output path
   outdir = paste0(samples_dir, "/megahit")
+  header = c("megahit_outname", "read_1", "read_2")
 
   #defining (trimmed!) samples to use
   samples = list.files(path = paste0(samples_dir, "/trimmed"))
@@ -131,36 +132,126 @@ run_sc_pipeline = function(samples_dir) {
   for (i in seq_along(samples_paths)) {
     path = samples_paths[i]
     name = samples[i]
-    if (grepl("_1P.f", path) == TRUE){
+    if (grepl("_1P.f", path) == TRUE) {
       path2 = str_replace(path, pattern = "_1P.f", replacement = "_2P.f")
       name1 = str_replace(name, pattern = "_1P", replacement = "")
-      run_megahit(PE = T,
-                  script_path = "inst/megahit.sh",
-                  r1 = path,
-                  r2 = path2,
-                  outdir = outdir,
-                  outname = paste0("megahit_", name1)
+      outname = paste0("megahit_", name1)
+      run_megahit(
+        PE = T,
+        script_path = "inst/megahit.sh",
+        r1 = path,
+        r2 = path2,
+        outdir = outdir,
+        outname = outname
       )
+      io_log = c(outname, path, path2)
     } else {
-      if (grepl("_2P.f", path) == FALSE){
-        if (grepl("_1U", path) == FALSE){
-          if (grepl("_2U", path) == FALSE){
-          run_megahit(PE = F,
-                      script_path = "inst/megahit.sh",
-                      r1 = path,
-                      outdir = outdir,
-                      outname = paste0("megahit_", name)
-          )
+      if (grepl("_2P.f", path) == FALSE) {
+        if (grepl("_1U", path) == FALSE) {
+          if (grepl("_2U", path) == FALSE) {
+            outname = paste0("megahit_", name)
+            run_megahit(
+              PE = F,
+              script_path = "inst/megahit.sh",
+              r1 = path,
+              outdir = outdir,
+              outname = outname
+            )
+            io_log = c(outname, path, "NA")
           }
         }
       }
     }
+    header = rbind(header, io_log)
   }
+
+  # log for use in bbmap
+  megahit_io = unique.data.frame(header[-1,])
+  colnames(megahit_io) = header[1,]
+
   ##### -------------------------------------------------------------------------------
 
   ##### Assembly quality assessment -----------------------------------------------------
-  # using metaquast the assemblies stats can be calulated, using bbmap the coverage of each contig.
+  # using quast the assemblies stats can be calulated, using bbmap the coverage of each contig.
 
+  # getting paths to contigs
+  samples = list.files(path = paste0(samples_dir, "/megahit"))
+  contig_paths = paste0(samples_dir, "/megahit/", samples, "/final.contigs.fa")
+
+  # creating quast output directory
+  command = paste0("mkdir ", samples_dir, "/quast")
+  system(command)
+
+  # running quast
+  for (i in seq_along(contig_paths)) {
+    path = contig_paths[i]
+    name = samples[i]
+    run_quast(filepath = path,
+              outdir = paste0(samples_dir, "/quast/", "quast_", name))
+  }
+
+  # collecting basic stats assemblies
+  quast_parent_dir = paste0(samples_dir, "/quast")
+  quast_summary_stats = quast_summary(quast_parent_dir = quast_parent_dir)
+
+  #create bbmap main outdir
+  command = paste0("mkdir ", samples_dir, "/bbmap")
+  system(command)
+
+  # running bbmap
+  logs = list()
+  refs = list()
+  for (megahit_run in 1:nrow(megahit_io)) {
+    record = megahit_io[megahit_run,]
+    if (record["read_2"] == "NA") {
+      #run SE
+      log = run_bbmap(mode = "SE",
+                read1 = record["read_1"],
+                ref = paste0(samples_dir, "/megahit/", record["megahit_outname"], "/final.contigs.fa"),
+                outdir = paste0(samples_dir, "/bbmap/bbmap_", record["megahit_outname"])
+                )
+      logs = append(logs, list(log))
+      refs = append(refs, record["megahit_outname"])
+    } else {
+      #run PE
+      log = run_bbmap(mode = "PE",
+                read1 = record["read_1"],
+                read2 = record["read_2"],
+                ref = paste0(samples_dir, "/megahit/", record["megahit_outname"], "/final.contigs.fa"),
+                outdir = paste0(samples_dir, "/bbmap/bbmap_", record["megahit_outname"])
+      )
+      logs = append(logs, list(log))
+      refs = append(refs, record["megahit_outname"])
+    }
+  }
+
+  #parsing logs
+  #initialize df
+  df = c("a","a","a","a","a","a","a","a","a","a","a","a","a")
+  for (i in seq(1, length(refs))) {
+    log = unlist(logs[i])
+    ref = unlist(refs[i])
+    for (line in log) {
+      if (grepl("Reads:", line) == TRUE) {
+        start_results = match(line, log)
+      }
+      if (grepl("Percent of reference bases covered:", line) == TRUE) {
+        end_results = match(line, log)
+      }
+    }
+    results = log[start_results:end_results]
+    header = c("Reference:", ref)
+    for (line in results) {
+      line = strsplit(line, split = '\t')
+      header = rbind(header, unlist(line))
+      record = t(header)
+      colnames(record) = NULL
+      rownames(record) = NULL
+    }
+    df = rbind(df, record)
+  }
+  bbmap_summary_stats = unique.data.frame(df[-1,])
+  #Note: grinder 10x coverage setting from control reads can be seen in bbmap output!
   ##### -----------------------------------------------------------------------------------
 
 }
@@ -184,4 +275,7 @@ source("/home/rstudio/scpackage/R/run_fastqc.R")
 source("/home/rstudio/scpackage/R/fastqc_multisummary.R")
 source("/home/rstudio/scpackage/R/run_trimmomatic.R")
 source("/home/rstudio/scpackage/R/run_megahit.R")
+source("/home/rstudio/scpackage/R/run_quast.R")
+source("/home/rstudio/scpackage/R/quast_summary.R")
+source("/home/rstudio/scpackage/R/run_bbmap.R")
 run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/test_samples")
