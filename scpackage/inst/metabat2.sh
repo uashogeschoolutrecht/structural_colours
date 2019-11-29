@@ -10,13 +10,12 @@ conda activate metabat2
 #############
 
 # input flag s (path) for single end and p for paired end (path1,path2), output name and main path dir
-while getopts b:f:o: aflag
+while getopts b:f: aflag
 do
 case "${aflag}"
 in
 b) INPUT_S_BAM=${OPTARG};;
 f) INPUT_FA=${OPTARG};;
-o) OUT_DIR=${OPTARG};;
 esac
 done
 
@@ -26,9 +25,6 @@ metabat2 -i ${INPUT_FA} \
 -a mapped.depth.txt \
 -o mapped.metabat -t 10 -m 1500 -v --unbinned
 
-mkdir ${OUTDIR}
-mv mapped.* ${OUTDIR}
-mv mapped.depth.txt ${OUTDIR}
 
 #grep ">" mapped.metabat.1.fa | sed 's/>//g' > mapped.metabat.1.contigNames
 

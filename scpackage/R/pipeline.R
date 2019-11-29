@@ -254,8 +254,48 @@ run_sc_pipeline = function(samples_dir) {
   #Note: grinder 10x coverage setting from control reads can be seen in bbmap output!
   ##### -----------------------------------------------------------------------------------
 
-}
+  ##### Binning ------------------------------------------------------------------------
+  # to be able to get an idea from which taxonomic group a hit on a contig is, the contigs will be binned.
+  # bbmap output can be used to make the tool more sensitive
+  logs_header = c("Input:", "Bins:", "Percentage binned:")
 
+  command = paste0("mkdir ", samples_dir, "/metabat2")
+  system(command)
+
+  megahit_dirs = list.files(path = paste0(samples_dir, "/megahit"))
+  contig_paths = paste0(samples_dir, "/megahit/", megahit_dirs, "/final.contigs.fa")
+
+  for (i in seq(1, length(megahit_dirs))) {
+    #get paths
+    megahit_dir = megahit_dirs[i]
+    contig_path = contig_paths[i]
+    sorted_bam_path = paste0(samples_dir, "/bbmap/bbmap_", megahit_dir, "/mapped_sorted.bam")
+    #run metbata
+    metabat_log = run_metabat2(metabat_script = "inst/metabat2.sh",
+                 s_bam = sorted_bam_path,
+                 fasta = contig_path
+    )
+    # create output folder
+    command = paste0("mkdir ", samples_dir, "/metabat2/", megahit_dir)
+    system(command)
+    # move output files
+    command = paste0("mv mapped.* ", samples_dir, "/metabat2/", megahit_dir)
+    system(command)
+    #writing log
+    log = as_text(metabat_log$stdout)
+    bin = log[grepl("formed.", log)]
+    if (length(log[grepl("contigs were binned.", log)]) == 0) {
+      perc = NA
+    } else {
+      perc = log[grepl("contigs were binned.", log)]
+      perc = str_sub(perc, start = 12, end = nchar(perc))
+    }
+    new_log_record = c(megahit_dir, bin, perc)
+    logs_header = rbind(logs_header, new_log_record)
+  }
+  metabat_log = logs_header
+
+}
 
 
 library("rjsonapi")
@@ -278,4 +318,5 @@ source("/home/rstudio/scpackage/R/run_megahit.R")
 source("/home/rstudio/scpackage/R/run_quast.R")
 source("/home/rstudio/scpackage/R/quast_summary.R")
 source("/home/rstudio/scpackage/R/run_bbmap.R")
+source("/home/rstudio/scpackage/R/run_metabat2.R")
 run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/test_samples")

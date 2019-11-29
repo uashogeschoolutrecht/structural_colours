@@ -8,7 +8,9 @@
 #' @export
 #'
 #' @examples
-run_metabat2 = function(metabat_script, s_bam, fasta, outdir) {
-  command = paste0("nohup bash ", metabat_script, " -b ", s_bam, " -f ", fasta, " -o ", outdir)
-  system(command)
+run_metabat2 = function(metabat_script, s_bam, fasta) {
+  program = "bash"
+  args = c(metabat_script, "-b", s_bam, "-f", fasta)
+  log = sys::exec_internal(program, args)
+  return(log)
 }
