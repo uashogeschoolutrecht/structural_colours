@@ -18,9 +18,12 @@ RUN apt-get update && \
     apt-get install -y perl && \
     apt-get install -y liblist-moreutils-perl && \
     apt-get install -y libmath-random-mt-perl && \
+    apt-get install -y build-essential wget unzip python2.7 \
+    python-dev git python-pip curl autoconf autogen libssl-dev && \
     apt-get install -y libbio-perl-perl && \
     apt-get install -y libgetopt-euclid-perl && \
-    apt-get install -y build-essential libboost-all-dev git cmake curl libncurses5-dev zlib1g-dev
+    apt-get install -y build-essential libboost-all-dev git cmake curl libncurses5-dev zlib1g-dev && \
+    apt-get install rsync
 RUN apt-get update --fix-missing && \
     apt-get install -y wget bzip2 ca-certificates curl git && \
     apt-get clean && \
@@ -59,6 +62,13 @@ RUN wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.
 RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip && \
     unzip Trimmomatic-0.39.zip
 
+RUN cd /usr/ && \
+    wget http://github.com/DerrickWood/kraken2/archive/v2.0.8-beta.tar.gz && \
+    tar xzvf v2.0.8-beta.tar.gz && \
+    cd kraken2-2.0.8-beta && \
+    ./install_kraken2.sh /usr/local/bin/kraken2-v2.0.8 && \
+    ln -s /usr/local/bin/kraken2-v2.0.8/kraken2* /usr/local/bin/ && \
+    kraken2-build -h
 
 ##### Installing conda package manager #####
 ENV PATH="/opt/conda/bin:${PATH}"
@@ -87,9 +97,4 @@ RUN conda create -n megahit -c bioconda megahit
 
 ##### Setting environment #####
 RUN echo "export PATH=/bin:/opt/bbmap:/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
-#RUN echo "export TMPDIR=/tmp" >> /etc/bash.bashrc
-#RUN touch /home/$USER/.Renviron
-#RUN echo "R_LIBS=/opt/conda/envs/qiime2-2019.7/lib/R/library:\${R_LIBS}" >> /home/$USER/.Renviron
-#RUN mkdir /usr/share/perl5/Math/Random/ && \
-#    mv /usr/lib/x86_64-linux-gnu/perl5/5.24/Math/Random/MT.pm /usr/share/perl5/Math/Random/
-#RUN echo "export PERL5LIB=/usr/share/perl5:$PERL5LIB" >> /etc/bash.bashrc
+

@@ -297,7 +297,28 @@ run_sc_pipeline = function(samples_dir) {
   ##### ----------------------------------------------------------------------------------------------------
 
   ##### Taxonomic assignment of whole samples and bins -----------------------------------------------------
+  # metaphlan2
+  command = paste0("mkdir ", samples_dir, "/metaphlan2")
+  system(command)
 
+  megahit_dirs = list.files(path = paste0(samples_dir, "/megahit"))
+  contig_paths = paste0(samples_dir, "/megahit/", megahit_dirs, "/final.contigs.fa")
+
+  for (i in seq(1, length(megahit_dirs))) {
+    #get paths
+    megahit_dir = megahit_dirs[i]
+    contig_path = contig_paths[i]
+
+    basename = str_split(megahit_dir, pattern = ".f")[[1]][1]
+    command = paste0("mkdir ", samples_dir, "/metaphlan2/", basename)
+    system(command)
+
+    q2_metaphlan2(input = contig_path,
+                  bowtiedb = paste0(samples_dir, "/metaphlan2/bowtiedb"),
+                  bowtieout = paste0(samples_dir, "/metaphlan2/", basename, "/bowtie2out"),
+                  outfile = paste0(samples_dir, "/metaphlan2/", basename, "/taxonomy.txt")
+                  )
+  }
   ##### -----------------------------------------------------------------------------------------------------
 
 }
