@@ -20,6 +20,7 @@ RUN apt-get update && \
     apt-get install -y libmath-random-mt-perl && \
     apt-get install -y build-essential wget unzip python2.7 \
     python-dev git python-pip curl autoconf autogen libssl-dev && \
+    apt-get install -y python3-pip && \
     apt-get install -y libbio-perl-perl && \
     apt-get install -y libgetopt-euclid-perl && \
     apt-get install -y build-essential libboost-all-dev git cmake curl libncurses5-dev zlib1g-dev && \
@@ -69,6 +70,14 @@ RUN cd /usr/ && \
     ./install_kraken2.sh /usr/local/bin/kraken2-v2.0.8 && \
     ln -s /usr/local/bin/kraken2-v2.0.8/kraken2* /usr/local/bin/ && \
     kraken2-build -h
+
+RUN pip3 install numpy && \
+    pip3 install pysam && \
+    pip3 install checkm-genome
+RUN echo -e "cat << EOF\n/db/CheckM\nEOF\n" | checkm data setRoot
+
+RUN pip3 install EukRep
+
 
 ##### Installing conda package manager #####
 ENV PATH="/opt/conda/bin:${PATH}"
