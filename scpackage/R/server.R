@@ -31,12 +31,14 @@ shinyServer(function(input, output) {
       addProviderTiles("Esri.WorldImagery", group = "Esri") %>%
       hideGroup("Markers")
   })
+  output$map_table = renderDataTable(filtered() %>%
+                                  as.data.frame())
   output$download_data <- downloadHandler(
       filename = function() {
         paste('data-', Sys.Date(), '.csv', sep='')
       },
       content = function(con) {
-        write.csv(data[data$salinity_ppt >= input$range[1] & data$salinity_ppt <= input$range[2] #filter function
+        write.csv(data[data$salinity_ppt >= input$range[1] & data$salinity_ppt <= input$range[2]
                        & data$depth_m >= input$range2[1] & data$depth_m <= input$range2[2], ], con)
       }
     )

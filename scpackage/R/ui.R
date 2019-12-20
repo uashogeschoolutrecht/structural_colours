@@ -63,6 +63,10 @@ shinyUI(fluidPage(sidebarLayout(
 
     ),
     tabPanel(
+      "Map data",
+      dataTableOutput("map_table")
+    ),
+    tabPanel(
       "Krona plot",
       tags$iframe(style = "height: 750px; width: 100%",
                   srcdoc = HTML(as.character(
