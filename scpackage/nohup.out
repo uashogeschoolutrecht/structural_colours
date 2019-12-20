@@ -1,0 +1,229 @@
+mkdir: cannot create directory ‘/home/rstudio/data/geodescent/test_samples/CAT’: File exists
+[1] "NCBI nr database has been found, nothing will be downloaded."
+[1] "/CAT-5.0.3/CAT_pack/CAT contigs -c /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_control_IR1-reads.fastq/final.contigs.fa -d /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database -t /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy"
+# CAT v5.0.3.
+
+CAT is running. Protein prediction, alignment, and contig classification are carried out.
+Rarw!
+
+Supplied command: /CAT-5.0.3/CAT_pack/CAT contigs -c /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_control_IR1-reads.fastq/final.contigs.fa -d /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database -t /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy
+
+Contigs fasta: /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_control_IR1-reads.fastq/final.contigs.fa
+Taxonomy folder: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/
+Database folder: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/
+Parameter r: 10
+Parameter f: 0.5
+Log file: out.CAT.log
+
+-----------------
+
+Doing some pre-flight checks first.
+[2019-12-19 14:42:28.296448] Prodigal found: Prodigal V2.6.3: February, 2016.
+[2019-12-19 14:42:28.305147] DIAMOND found: diamond version 0.9.21.
+Ready to fly!
+
+-----------------
+
+[2019-12-19 14:42:28.305711] Importing contig names from /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_control_IR1-reads.fastq/final.contigs.fa.
+[2019-12-19 14:42:28.324183] Running Prodigal for ORF prediction. Files out.CAT.predicted_proteins.faa and out.CAT.predicted_proteins.gff will be generated. Do not forget to cite Prodigal when using CAT or BAT in your publication!
+[2019-12-19 14:42:44.836905] ORF prediction done!
+[2019-12-19 14:42:44.837300] Parsing ORF file out.CAT.predicted_proteins.faa
+[2019-12-19 14:42:44.857010] Homology search with DIAMOND is starting. Please be patient. Do not forget to cite DIAMOND when using CAT or BAT in your publication!
+				query: out.CAT.predicted_proteins.faa
+				database: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.dmnd
+				mode: fast
+				number of cores: 8
+				block-size (billions of letters): 2.0
+				index-chunks: 4
+				tmpdir: ./
+				top: 50
+[2019-12-19 15:45:57.598380] Homology search done! File out.CAT.alignment.diamond created.
+[2019-12-19 15:45:57.601323] Parsing DIAMOND file out.CAT.alignment.diamond.
+[2019-12-19 15:46:00.099602] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/nodes.dmp.
+[2019-12-19 15:46:07.044225] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.fastaid2LCAtaxid.
+[2019-12-19 15:49:11.162203] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.taxids_with_multiple_offspring.
+[2019-12-19 15:49:11.205544] CAT is spinning! Files out.CAT.contig2classification.txt and out.CAT.ORF2LCA.txt are created.
+
+-----------------
+
+[2019-12-19 15:49:12.480914] CAT is done! 1852/1919 contigs classified.
+# CAT v5.0.3.
+[2019-12-19 15:49:13.110649] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/nodes.dmp.
+[2019-12-19 15:49:17.385915] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/names.dmp.
+[2019-12-19 15:49:23.091234] Appending names...
+[2019-12-19 15:49:23.108990] Names written to /home/rstudio/data/geodescent/test_samples/CAT/control_IR1-reads/taxonomy.txt!
+mkdir: cannot create directory ‘/home/rstudio/data/geodescent/test_samples/CAT’: File exists
+[1] "NCBI nr database has been found, nothing will be downloaded."
+[1] "/CAT-5.0.3/CAT_pack/CAT contigs -c /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833291.fastq.gz/final.contigs.fa -d /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database -t /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy"
+# CAT v5.0.3.
+
+CAT is running. Protein prediction, alignment, and contig classification are carried out.
+Rarw!
+
+Supplied command: /CAT-5.0.3/CAT_pack/CAT contigs -c /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833291.fastq.gz/final.contigs.fa -d /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database -t /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy
+
+Contigs fasta: /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833291.fastq.gz/final.contigs.fa
+Taxonomy folder: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/
+Database folder: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/
+Parameter r: 10
+Parameter f: 0.5
+Log file: out.CAT.log
+
+-----------------
+
+Doing some pre-flight checks first.
+[2019-12-19 15:49:23.613957] Prodigal found: Prodigal V2.6.3: February, 2016.
+[2019-12-19 15:49:23.619586] DIAMOND found: diamond version 0.9.21.
+Ready to fly!
+
+-----------------
+
+[2019-12-19 15:49:23.620033] Importing contig names from /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833291.fastq.gz/final.contigs.fa.
+[2019-12-19 15:49:24.967091] Running Prodigal for ORF prediction. Files out.CAT.predicted_proteins.faa and out.CAT.predicted_proteins.gff will be generated. Do not forget to cite Prodigal when using CAT or BAT in your publication!
+[2019-12-19 15:50:28.649881] ORF prediction done!
+[2019-12-19 15:50:28.650153] Parsing ORF file out.CAT.predicted_proteins.faa
+[2019-12-19 15:50:28.784782] Homology search with DIAMOND is starting. Please be patient. Do not forget to cite DIAMOND when using CAT or BAT in your publication!
+				query: out.CAT.predicted_proteins.faa
+				database: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.dmnd
+				mode: fast
+				number of cores: 8
+				block-size (billions of letters): 2.0
+				index-chunks: 4
+				tmpdir: ./
+				top: 50
+[2019-12-19 17:20:29.926110] Homology search done! File out.CAT.alignment.diamond created.
+[2019-12-19 17:20:29.928773] Parsing DIAMOND file out.CAT.alignment.diamond.
+[2019-12-19 17:20:35.705173] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/nodes.dmp.
+[2019-12-19 17:20:40.298213] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.fastaid2LCAtaxid.
+[2019-12-19 17:22:38.178833] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.taxids_with_multiple_offspring.
+[2019-12-19 17:22:38.202031] CAT is spinning! Files out.CAT.contig2classification.txt and out.CAT.ORF2LCA.txt are created.
+
+-----------------
+
+[2019-12-19 17:22:43.104924] CAT is done! 25271/34212 contigs classified.
+# CAT v5.0.3.
+[2019-12-19 17:22:43.757432] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/nodes.dmp.
+[2019-12-19 17:22:47.708950] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/names.dmp.
+[2019-12-19 17:22:50.974734] Appending names...
+[2019-12-19 17:22:51.185707] Names written to /home/rstudio/data/geodescent/test_samples/CAT/ERR833291/taxonomy.txt!
+mkdir: cannot create directory ‘/home/rstudio/data/geodescent/test_samples/CAT’: File exists
+[1] "NCBI nr database has been found, nothing will be downloaded."
+[1] "/CAT-5.0.3/CAT_pack/CAT contigs -c /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833305.fastq.gz/final.contigs.fa -d /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database -t /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy"
+# CAT v5.0.3.
+
+CAT is running. Protein prediction, alignment, and contig classification are carried out.
+Rarw!
+
+Supplied command: /CAT-5.0.3/CAT_pack/CAT contigs -c /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833305.fastq.gz/final.contigs.fa -d /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database -t /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy
+
+Contigs fasta: /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833305.fastq.gz/final.contigs.fa
+Taxonomy folder: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/
+Database folder: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/
+Parameter r: 10
+Parameter f: 0.5
+Log file: out.CAT.log
+
+-----------------
+
+Doing some pre-flight checks first.
+[2019-12-19 17:22:51.635266] Prodigal found: Prodigal V2.6.3: February, 2016.
+[2019-12-19 17:22:51.640135] DIAMOND found: diamond version 0.9.21.
+Ready to fly!
+
+-----------------
+
+[2019-12-19 17:22:51.640543] Importing contig names from /home/rstudio/data/geodescent/test_samples/megahit/megahit_trimmed_ERR833305.fastq.gz/final.contigs.fa.
+[2019-12-19 17:22:51.658318] Running Prodigal for ORF prediction. Files out.CAT.predicted_proteins.faa and out.CAT.predicted_proteins.gff will be generated. Do not forget to cite Prodigal when using CAT or BAT in your publication!
+[2019-12-19 17:22:51.874600] ORF prediction done!
+[2019-12-19 17:22:51.874842] Parsing ORF file out.CAT.predicted_proteins.faa
+[2019-12-19 17:22:51.875459] Homology search with DIAMOND is starting. Please be patient. Do not forget to cite DIAMOND when using CAT or BAT in your publication!
+				query: out.CAT.predicted_proteins.faa
+				database: /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.dmnd
+				mode: fast
+				number of cores: 8
+				block-size (billions of letters): 2.0
+				index-chunks: 4
+				tmpdir: ./
+				top: 50
+[2019-12-19 17:40:56.764307] Homology search done! File out.CAT.alignment.diamond created.
+[2019-12-19 17:40:56.767018] Parsing DIAMOND file out.CAT.alignment.diamond.
+[2019-12-19 17:40:56.919223] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/nodes.dmp.
+[2019-12-19 17:41:01.525537] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.fastaid2LCAtaxid.
+[2019-12-19 17:42:39.626266] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_CAT_database/2019-07-19.nr.taxids_with_multiple_offspring.
+[2019-12-19 17:42:39.656512] CAT is spinning! Files out.CAT.contig2classification.txt and out.CAT.ORF2LCA.txt are created.
+
+-----------------
+
+[2019-12-19 17:42:39.770535] CAT is done! 73/75 contigs classified.
+# CAT v5.0.3.
+[2019-12-19 17:42:40.315165] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/nodes.dmp.
+[2019-12-19 17:42:44.206324] Importing file /home/rstudio/data/geodescent/test_samples/CAT/CAT_prepare_20190719/2019-07-19_taxonomy/names.dmp.
+[2019-12-19 17:42:47.934641] Appending names...
+[2019-12-19 17:42:47.936325] Names written to /home/rstudio/data/geodescent/test_samples/CAT/ERR833305/taxonomy.txt!
+Error in cat_rename_seq_id(bin_dirs_parent_dir = bin_dirs_parent_dir,  : 
+  unused argument (outfile = outfile)
+Calls: source -> withVisible -> eval -> eval
+Execution halted
+The name is too long, 324 chars total.
+Trying to shorten...
+New name is filereport?accession=PRJNA413894&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitt.
+--2019-12-20 10:03:48--  https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJNA413894&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt
+Resolving www.ebi.ac.uk (www.ebi.ac.uk)... 193.62.193.80
+Connecting to www.ebi.ac.uk (www.ebi.ac.uk)|193.62.193.80|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘filereport?accession=PRJNA413894&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitt’
+
+     0K ..........                                              157M=0s
+
+2019-12-20 10:03:50 (157 MB/s) - ‘filereport?accession=PRJNA413894&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitt’ saved [10756]
+
+The name is too long, 324 chars total.
+Trying to shorten...
+New name is filereport?accession=PRJNA415974&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitt.
+--2019-12-20 10:03:50--  https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJNA415974&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt
+Resolving www.ebi.ac.uk (www.ebi.ac.uk)... 193.62.193.80
+Connecting to www.ebi.ac.uk (www.ebi.ac.uk)|193.62.193.80|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘filereport?accession=PRJNA415974&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitt’
+
+     0K .......... .......... .......... .......... .....      1.06M=0.04s
+
+2019-12-20 10:03:51 (1.06 MB/s) - ‘filereport?accession=PRJNA415974&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitt’ saved [46992]
+
+The name is too long, 323 chars total.
+Trying to shorten...
+New name is filereport?accession=PRJEB14154&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitte.
+--2019-12-20 10:03:51--  https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJEB14154&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt
+Resolving www.ebi.ac.uk (www.ebi.ac.uk)... 193.62.193.80
+Connecting to www.ebi.ac.uk (www.ebi.ac.uk)|193.62.193.80|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘filereport?accession=PRJEB14154&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitte’
+
+     0K .......... .......... .......... .......... ..........  641K
+    50K .......... .......... .......... .......... ..........  790K
+   100K .......... .......... .......... .......... .......... 1.53M
+   150K .......... .......... .                                9.82M=0.2s
+
+2019-12-20 10:03:52 (977 KB/s) - ‘filereport?accession=PRJEB14154&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitte’ saved [175444]
+
+The name is too long, 323 chars total.
+Trying to shorten...
+New name is filereport?accession=PRJEB22134&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitte.
+--2019-12-20 10:03:52--  https://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=PRJEB22134&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitted_ftp,submitted_galaxy,sra_ftp,sra_galaxy,cram_index_ftp,cram_index_galaxy&download=txt
+Resolving www.ebi.ac.uk (www.ebi.ac.uk)... 193.62.193.80
+Connecting to www.ebi.ac.uk (www.ebi.ac.uk)|193.62.193.80|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘filereport?accession=PRJEB22134&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitte’
+
+     0K .........                                               110M=0s
+
+2019-12-20 10:03:54 (110 MB/s) - ‘filereport?accession=PRJEB22134&result=read_run&fields=study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,tax_id,scientific_name,instrument_model,library_layout,fastq_ftp,fastq_galaxy,submitte’ saved [9824]
+
+[1] "Tested: Sequencing data is available for all samples with metadata"
+[1] "Note: Downloading fastq files, this can take days."
+[1] "Note: A silent error may occur when the connection is refused by ebi. Please check that all files are downloaded"
+[1] "grinder -reference_file /home/$USER/scpackage/inst/extdata/GCA_002277835.1_ASM227783v1_genomic.fna -fastq_output 1 -qual_levels 35 10 -mutation_dist poly4 3e-3 3.3e-8 -base_name control_IR1 -output_dir /home/rstudio/data/geodescent/samples -coverage_fold 10"

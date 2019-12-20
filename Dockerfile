@@ -78,6 +78,17 @@ RUN echo -e "cat << EOF\n/db/CheckM\nEOF\n" | checkm data setRoot
 
 RUN pip3 install EukRep
 
+RUN wget http://github.com/bbuchfink/diamond/releases/download/v0.9.21/diamond-linux64.tar.gz && \
+    tar xzf diamond-linux64.tar.gz && \
+    mv /diamond /usr/bin
+
+RUN wget https://github.com/dutilh/CAT/archive/v5.0.3.tar.gz && \
+    tar xzf v5.0.3.tar.gz
+    
+RUN wget https://github.com/hyattpd/Prodigal/archive/v2.6.3.tar.gz && \
+    tar xzf v2.6.3.tar.gz && \
+    cd /Prodigal-2.6.3 && \
+    make install
 
 ##### Installing conda package manager #####
 ENV PATH="/opt/conda/bin:${PATH}"
@@ -105,5 +116,5 @@ RUN conda create -n megahit -c bioconda megahit
 
 
 ##### Setting environment #####
-RUN echo "export PATH=/bin:/opt/bbmap:/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
+RUN echo "export PATH=/bin:/CAT-5.0.3/CAT_pack:/opt/bbmap:/opt/conda/envs/q2-metaphlan2/bin:/opt/conda/envs/q2-metaphlan2/lib/python3.5/site-packages/q2_metaphlan2-2.7.8-py3.5.egg-info/scripts:/opt/sratoolkit.2.10.0-ubuntu64/bin:\${PATH}" >> /etc/bash.bashrc
 

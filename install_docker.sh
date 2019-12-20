@@ -18,6 +18,3 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 #test installation with following line
 sudo docker -v
-
-#plugin for rclone mount
-sudo docker plugin install sapk/plugin-rclone

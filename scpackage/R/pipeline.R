@@ -1,4 +1,4 @@
-run_sc_pipeline = function(samples_dir) {
+run_sc_pipeline = function(samples_dir, marker_genes_fasta) {
   ##### Loading data -----------------------------------------------------------
   MGYS00000991_meta = get_MGYS00000991()
   MGYS00005036_meta = get_MGYS00005036()
@@ -38,9 +38,24 @@ run_sc_pipeline = function(samples_dir) {
 
   #getting fastq files
   print("Note: Downloading fastq files, this can take days.")
-  get_fastq(filereport = metadata,
-            outdir = samples_dir)
+  #get_fastq(filereport = metadata,
+  #          outdir = samples_dir)
   print("Note: A silent error may occur when the connection is refused by ebi. Please check that all files are downloaded")
+
+  #checking if all fastq files are downloaded
+  #list.files(path = samples_dir)
+  files = list.files(path = "/home/rstudio/data/geodescent/samples")
+  files = substr(files, 1, nchar(files)-11)
+  accs = unique(files)
+
+  not_downloaded = as.character(metadata$run_accession[metadata$run_accession %in% accs == FALSE])
+  to_download = metadata %>%
+    dplyr::filter(run_accession %in% not_downloaded)
+  get_fastq(filereport = to_download,
+            outdir = samples_dir)
+
+
+
   ##### -------------------------------------------------------------------------------
 
   ##### Create control sample -----------------------------------------------------------
@@ -284,11 +299,13 @@ run_sc_pipeline = function(samples_dir) {
                  s_bam = sorted_bam_path,
                  fasta = contig_path
     )
+    basename = str_replace(megahit_dir, pattern = "megahit_trimmed_", replacement = "")
+    basename = str_split(basename, pattern = ".f")[[1]][1]
     # create output folder
-    command = paste0("mkdir ", samples_dir, "/metabat2/", megahit_dir)
+    command = paste0("mkdir ", samples_dir, "/metabat2/", basename)
     system(command)
     # move output files
-    command = paste0("mv mapped.* ", samples_dir, "/metabat2/", megahit_dir)
+    command = paste0("mv mapped.* ", samples_dir, "/metabat2/", basename)
     system(command)
     #writing log
     log = as_text(metabat_log$stdout)
@@ -299,14 +316,49 @@ run_sc_pipeline = function(samples_dir) {
       perc = log[grepl("contigs were binned.", log)]
       perc = str_sub(perc, start = 12, end = nchar(perc))
     }
-    new_log_record = c(megahit_dir, bin, perc)
+    new_log_record = c(basename, bin, perc)
     logs_header = rbind(logs_header, new_log_record)
   }
   metabat_log = logs_header
   ##### ----------------------------------------------------------------------------------------------------
 
+
+
+  ##### Blast  -------------------------------------------------------------------------------
+  cmd = paste0("mkdir ", samples_dir, "/blast")
+  system(cmd)
+
+  #renaming adding bin and sample names to contigs to retrace
+  metabat_dir = paste0(samples_dir, "/metabat2")
+  cat_rename_seq_id(bin_dirs_parent_dir = metabat_dir)
+
+  #concatenating renamed contig files for use in make blast db
+  sample_dirs_metabat = paste0(metabat_dir, "/", list.files(metabat_dir))
+  blast_db_fasta = paste0(samples_dir, "/blast/database.fa")
+  for (metabat_sample_dir in sample_dirs_metabat){
+    files = list.files(metabat_sample_dir)
+    contig_file = files[grepl("total_", files)]
+    contig_path = paste0(metabat_sample_dir, "/", contig_file)
+    command = paste0("cat ", contig_path, " >> ", blast_db_fasta)
+    system(command)
+  }
+
+  #making blast db
+  makeblastdb(input = blast_db_fasta,
+              outname = 'blast_database',
+              outdir = paste0(samples_dir, "/blast/"),
+              dbtype = 'nucl')
+
+  #running tblastn (prot against nucl)
+  blast(blast = "tblastn",
+        blast_db = paste0(samples_dir, "/blast/blast_database/blast_database"),
+        input = marker_genes_fasta,
+        out = paste0(samples_dir, "/blast/blast_out"),
+        format = 6)
+  #####---------------------------------------------------------------------------------------------
+
   ##### Taxonomic assignment of whole samples and bins -----------------------------------------------------
-  # kraken2
+  # CAT on contigs whole samples
   megahit_dirs = list.files(path = paste0(samples_dir, "/megahit"))
   contig_paths = paste0(samples_dir, "/megahit/", megahit_dirs, "/final.contigs.fa")
 
@@ -318,15 +370,38 @@ run_sc_pipeline = function(samples_dir) {
     basename = str_replace(megahit_dir, pattern = "megahit_trimmed_", replacement = "")
     basename = str_split(basename, pattern = ".f")[[1]][1]
 
-    run_kraken2(samples_dir = samples_dir,
-                outname = basename,
-                threads = 15,
-                contig = contig_path)
+    run_CAT(samples_dir = samples_dir,
+            outname = basename,
+            contigpath = contig_path)
   }
   ##### -----------------------------------------------------------------------------------------------------
 
-}
+  ##### Running prokka annoations pipeline
+  cmd = paste0("mkdir ", samples_dir, "/prokka")
+  system(cmd)
 
+  metabat_dir = paste0(samples_dir, "/metabat2")
+  sample_dirs_metabat = paste0(metabat_dir, "/", list.files(metabat_dir))
+
+  for (sample_dir in sample_dirs_metabat){
+    files = list.files(sample_dir)
+    contig = files[grepl(pattern = "total_", files)]
+    basename = substr(contig, 7, nchar(contig)-3) #remove prefix and extention
+    contig_path = paste0(sample_dir, "/", contig)
+
+    #run prokka on renamed contigs per sample
+    run_prokka(prokka_script = "inst/prokka.sh",
+               contigpath = contig_path,
+               outdir = paste0(samples_dir, "/prokka/", basename),
+               prefix = basename)
+  }
+
+  cmd = paste0("mkdir ", samples_dir,"/logs")
+  system(cmd)
+  save.image(file = paste0(samples_dir, "/logs/", "work_space.RData"))
+
+
+}
 
 library("rjsonapi")
 library("foreach")
@@ -350,4 +425,11 @@ source("/home/rstudio/scpackage/R/run_quast.R")
 source("/home/rstudio/scpackage/R/quast_summary.R")
 source("/home/rstudio/scpackage/R/run_bbmap.R")
 source("/home/rstudio/scpackage/R/run_metabat2.R")
-run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/test_samples")
+source("/home/rstudio/scpackage/R/run_CAT.R")
+source("/home/rstudio/scpackage/R/makeblastdb.R")
+source("/home/rstudio/scpackage/R/blast.R")
+source("/home/rstudio/scpackage/R/cat_rename_seq-id.R")
+source("/home/rstudio/scpackage/R/run_prokka.R")
+
+run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/samples",
+                marker_genes_fasta = "/home/rstudio/scpackage/inst/extdata/M17.txt")
