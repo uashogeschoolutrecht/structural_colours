@@ -3,37 +3,74 @@ library(sf)
 library(spData)
 library(tmap)
 library(leaflet)
-#library(KronaR)
-#devtools::install_git("https://github.com/pierreLec/KronaR")
-
 
 #creating map to plot
 path = "/home/rstudio/scpackage/inst/extdata/MGYS00000974.csv"
 path2 = "/home/rstudio/scpackage/inst/extdata/MGYS00000991_clean.csv"
 path3 = "/home/rstudio/scpackage/inst/extdata/MGYS00005036.csv"
 
-data = st_read(path, options = c("X_POSSIBLE_NAMES=X","Y_POSSIBLE_NAMES=Y")) #https://gdal.org/drivers/vector/csv.html
-data2 = st_read(path2, options = c("X_POSSIBLE_NAMES=X","Y_POSSIBLE_NAMES=Y"))
-data3 = st_read(path3, options = c("X_POSSIBLE_NAMES=X","Y_POSSIBLE_NAMES=Y"))
+data = st_read(path, options = c("X_POSSIBLE_NAMES=X", "Y_POSSIBLE_NAMES=Y")) #https://gdal.org/drivers/vector/csv.html
+data2 = st_read(path2, options = c("X_POSSIBLE_NAMES=X", "Y_POSSIBLE_NAMES=Y"))
+data3 = st_read(path3, options = c("X_POSSIBLE_NAMES=X", "Y_POSSIBLE_NAMES=Y"))
 
 st_crs(data) = 4326
 st_crs(data2) = 4326
 st_crs(data3) = 4326
 
-shinyServer(
-  function(input, output) {
-    tm = tm_shape(world) +
-      tm_polygons() +
-      tm_shape(data) +
-      tm_dots(shape = 1, col = "red", size = 0.01) +
-      tm_shape(data2) +
-      tm_dots(shape = 1, col = "blue", size = 0.01) +
-      tm_shape(data3) +
-      tm_dots(shape = 1, col = "yellow", size = 0.01)
-    tm = tmap_leaflet(tm)
-    output$my_tmap = renderLeaflet({
-      tm
-    }
+data$salinity_ppt = as.numeric(data$salinity_ppt)
+data$depth_m = as.numeric(data$depth_m)
+
+shinyServer(function(input, output) {
+  filtered = reactive({
+    data[data$salinity_ppt >= input$range[1] & data$salinity_ppt <= input$range[2] #filter for salinity slider
+         & data$depth_m >= input$range2[1] & data$depth_m <= input$range2[2], ] #filter for depth slider
+  })
+  output$my_tmap = renderLeaflet({
+    leaflet(data = data) %>%
+      addTiles(group = "OSM") %>%
+      addProviderTiles("Esri.WorldImagery", group = "Esri") %>%
+      hideGroup("Markers")
+  })
+  output$download_data <- downloadHandler(
+      filename = function() {
+        paste('data-', Sys.Date(), '.csv', sep='')
+      },
+      content = function(con) {
+        write.csv(data[data$salinity_ppt >= input$range[1] & data$salinity_ppt <= input$range[2] #filter function
+                       & data$depth_m >= input$range2[1] & data$depth_m <= input$range2[2], ], con)
+      }
     )
-  }
-)
+  observe(
+    leafletProxy("my_tmap", data = filtered()) %>%
+      clearMarkers() %>%
+      addMarkers(
+        lng = ~ X,
+        lat = ~ Y,
+        group = "Markers",
+        popup = ~ paste0(
+          "sample ID: ", accession, "<br>",
+          "platform: ", instrument_model, "<br>",
+          "depth (m): ", depth_m, "<br>",
+          "salinity (ppt): ", salinity_ppt, "<br>",
+          "description (max 100 char.): ", paste0(substr(sample.desc, start = 1, stop = 100), "...")
+        )
+      ) %>%
+      addCircleMarkers(
+        lng = ~ X,
+        lat = ~ Y,
+        group = "Circle Markers",
+        popup = ~ paste0(
+          "sample ID: ", accession, "<br>",
+          "platform: ", instrument_model, "<br>",
+          "depth (m): ", depth_m, "<br>",
+          "salinity (ppt): ", salinity_ppt, "<br>",
+          "description (max 100 char.): ", paste0(substr(sample.desc, start = 1, stop = 100), "...")
+        )
+      ) %>%
+      addLayersControl(
+        baseGroups = c("OSM", "Esri"),
+        overlayGroups = c("Markers", "Circle Markers"),
+        options = layersControlOptions(collapsed = FALSE)
+      )
+  )
+})
