@@ -27,14 +27,14 @@ run_trimmomatic = function(mode = "SE",
              paste0("SLIDINGWINDOW:", window),
              paste0("-phred", phred))
     log = sys::exec_internal("java", args)
-    trim_stats = as_text(log$stderr)[4]
+    trim_stats = sys::as_text(log$stderr)[4]
   } else {
     args = c('-jar', '/Trimmomatic-0.39/trimmomatic-0.39.jar',
              mode, f1, f2, "-baseout", prefix, paste0("MINLEN:", minlen),
              paste0("SLIDINGWINDOW:", window),
              paste0("-phred", phred))
     log = sys::exec_internal("java", args)
-    trim_stats = as_text(log$stderr)[4]
+    trim_stats = sys::as_text(log$stderr)[4]
   }
   return(trim_stats)
 }

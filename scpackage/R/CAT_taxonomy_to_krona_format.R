@@ -1,4 +1,4 @@
-CAT_noscore_taxonomy_to_krona_format = function(CAT_file, outfile){
+CAT_taxonomy_to_krona_format = function(CAT_file, outfile){
   file = read.csv(file = CAT_file, sep = "\t")
   krona_cols = file[,-c(3,4,5)]
   krona_cols$X..contig = 1
