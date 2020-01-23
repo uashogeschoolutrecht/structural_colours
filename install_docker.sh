@@ -1,6 +1,11 @@
 #!/bin/bash
 
-#install docker
+# Author: Patty Rosendaal
+# Date: 23-1-2020
+
+# This script can be run as superuser to install Docker on linux.
+
+# Installing Docker
 sudo apt-get update
 sudo apt-get install \
     apt-transport-https \
@@ -16,5 +21,5 @@ sudo add-apt-repository \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 
-#test installation with following line
+# Testing installation
 sudo docker -v

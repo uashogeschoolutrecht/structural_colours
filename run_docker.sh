@@ -1,28 +1,53 @@
 #!/bin/bash
-# This is s simple docker run command, broken up so you can read each bit
-# -d flag runs in detatched mode
-# use -it to start in interactive mode
-# --rm removes the container on exit
 
-#sudo docker run -d --rm \
-#    -p 28787:8787 \                         # map ports
-#    --name hello-world2 \                   # name container
-#    -e USERID=$UID \                        # you need to share a UID so you can write to mount file on host
-#    -e PASSWORD=SoSecret! \                   # set rstudio password - user is rstudio
-#    -v $DATA_DIR:/home/rstudio/Data \       # mount data directory to pick up changes or write to host
-#       rstudio/hello-world                  # the name of the image
+# Author: Patty Rosendaal
+# Date: 23-1-2020
 
+# This script starts a Docker container RStudio server from a previously built image.
 
-#sudo docker build --rm --force-rm -t rstudio/pack-testing1 .
-# docker volume create --driver sapk/plugin-rclone --opt config="$(base64 ~/.config/rclone/rclone.conf)" --opt remote=HPC_cloud: --name research_drive
-PASSWD=SoSecret
-PACK_DIR=${PWD}/scpackage
-DRIVE_DIR=/home/patty_rosendaal/local_storage
+# EXAMPLE: bash run_docker.sh -p 28787 -n testcont -u 1002 -w Pass -m /data -i testname5.
+# This command runs RStudio server from image 'testname5' on IP:28787.
+# The container name is 'testcont'. Login with username 'rstudio' and password 'Pass'.
+# User ID is set to 1002, allowing this user to write/open their files mounted from the host in the container (/data mounted here).
 
-sudo docker run -d --rm -p 28787:8787 --name geo_testing -e USERID=1002 -e PASSWORD=$PASSWD \
--v $PACK_DIR:/home/rstudio/scpackage -v $DRIVE_DIR:/home/rstudio/research_drive -v /data:/home/rstudio/data rstudio/pack-testing106
+# User input
+while getopts p:n:u:w:m:i: aflag
+do
+case "${aflag}"
+in
+p) PORT=${OPTARG};;
+n) CONTAINER_NAME=${OPTARG};;
+u) USER_ID=${OPTARG};;
+w) PASSWD=${OPTARG};;
+m) MOUNT=${OPTARG};;
+i) IMAGE=${OPTARG};;
+esac
+done
 
-#
+# For testing purposes, keep commented
+# PORT=28787
+# CONTAINER_NAME=testcont
+# USER_ID=1002
+# PASSWD=Pass
+# MOUNT=/data
+# IMAGE=testname5
 
-#sudo docker exec -it <container-id> bash
-#adduser <username>
+set -e
+err_report() {
+    echo "Error on line $1"
+    echo "Please check that supplied arguments are correct and no container of/on the same name/port is running."
+    echo "An example usage of this script is available in the script itself and in the package documentation."
+}
+trap 'err_report $LINENO' ERR
+
+# Running run container command
+if [ -z ${MOUNT+x} ]; then 
+  sudo docker run -d --rm -p ${PORT}:8787 --name ${CONTAINER_NAME} \
+  -e USERID=${USER_ID} -e PASSWORD=${PASSWD} ${IMAGE};
+else 
+  sudo docker run -d --rm -p ${PORT}:8787 --name ${CONTAINER_NAME} \
+  -e USERID=${USER_ID} -e PASSWORD=${PASSWD} \
+  -v ${MOUNT}:/home/rstudio/mount ${IMAGE}
+fi
+status=$?
+echo "Command exit status: ${status}"
