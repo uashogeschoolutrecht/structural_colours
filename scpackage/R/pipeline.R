@@ -1,3 +1,12 @@
+#' Title
+#'
+#' @param samples_dir
+#' @param marker_genes_fasta
+#'
+#' @return
+#' @export
+#'
+#' @examples
 run_sc_pipeline = function(samples_dir, marker_genes_fasta) {
   ##### Create control sample -----------------------------------------------------------
   # to check the validity of processing steps and later blast results IR1 will be used as positive control
@@ -343,6 +352,27 @@ run_sc_pipeline = function(samples_dir, marker_genes_fasta) {
                            Sys.time(), "_workspace.RData"))
   ##### -----------------------------------------------------------------------------------------------------
 
+  ##### Creating krona plot of CAT taxonomies ------------------------------------
+  CAT_files = list.files(path = paste0(samples_dir, "/CAT"))
+  CAT_names = CAT_files[!CAT_files %in% "CAT_prepare_20190719"]
+  CAT_files = paste0(samples_dir, "/CAT/", CAT_names, "/taxonomy.txt")
+
+  CAT_infiles = list()
+  for (i in 1:length(CAT_files)){
+    CAT_file = CAT_files[i]
+    CAT_name = CAT_names[i]
+    sample_outfile = paste0(samples_dir, "/CAT/", CAT_name, "/", CAT_name, ".txt")
+    CAT_infiles = append(CAT_infiles, sample_outfile)
+
+    CAT_taxonomy_to_krona_format(CAT_file = CAT_file,
+                                 outfile = sample_outfile)
+  }
+  CAT_infiles = unlist(CAT_infiles)
+  ktImportText(input_files = CAT_infiles,
+               outfile = paste0(samples_dir, "/CAT/krona_taxonomy.html"))
+  ##### --------------------------------------------------------------------------
+
+
   ##### Running prokka annoations pipeline
   cmd = paste0("mkdir ", samples_dir, "/prokka")
   system(cmd)
@@ -395,6 +425,7 @@ source("/home/rstudio/scpackage/R/run_CAT.R")
 source("/home/rstudio/scpackage/R/makeblastdb.R")
 source("/home/rstudio/scpackage/R/blast.R")
 source("/home/rstudio/scpackage/R/cat_rename_seq-id.R")
+source("/home/rstudio/scpackage/R/CAT_taxonomy_to_krona_format.R")
 source("/home/rstudio/scpackage/R/run_prokka.R")
 
 run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/test_samples",

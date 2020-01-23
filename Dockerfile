@@ -90,6 +90,11 @@ RUN wget https://github.com/hyattpd/Prodigal/archive/v2.6.3.tar.gz && \
     cd /Prodigal-2.6.3 && \
     make install
 
+RUN wget ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux.tbl2asn.gz && \
+    gunzip linux.tbl2asn.gz && \
+    mv linux.tbl2asn /bin/tbl2asn && \
+    chmod +x /bin/tbl2asn
+
 ##### Installing conda package manager #####
 ENV PATH="/opt/conda/bin:${PATH}"
 
@@ -110,7 +115,8 @@ RUN conda install anaconda-client -y
 RUN conda create -n q2-metaphlan2 -c fasnicar -c bioconda q2-metaphlan2
 RUN conda create -n sratoolkit -c bioconda sra-tools
 RUN conda create -n krona -c bioconda krona 
-RUN conda create -n prokka -c conda-forge -c bioconda -c defaults prokka
+RUN conda create -n prokka -c conda-forge -c bioconda -c defaults prokka && \
+    rm -rf /opt/conda/envs/prokka/bin/tbl2asn
 RUN conda create -n metabat2 -c bioconda metabat2
 RUN conda create -n megahit -c bioconda megahit
 

@@ -6,9 +6,6 @@ CAT_taxonomy_to_krona_format = function(CAT_file, outfile){
               col.names = FALSE, row.names = FALSE, quote = FALSE)
 }
 
-CAT_file = "/home/rstudio/data/official_named_noscore_tax.txt"
-outfile = "/home/rstudio/data/krona_tax_IR1.txt"
-
 
 
 
