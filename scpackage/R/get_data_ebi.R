@@ -19,6 +19,7 @@ get_data_ebi = function(accession, outdir){
   library(dplyr)
   library(purrr)
   library(readr)
+  library(stringr)
 
   ##### MGnify rest api ################################################
   base <- "https://www.ebi.ac.uk/metagenomics/api/v1/"
@@ -213,5 +214,5 @@ get_data_ebi = function(accession, outdir){
       }
     }
   }
-  return(total_md5s)
+  return(all_md5s)
 }

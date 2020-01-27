@@ -3,6 +3,7 @@ library(sf)
 library(spData)
 library(tmap)
 library(leaflet)
+source("/home/rstudio/scpackage/R/gbtools.R")
 
 #creating map to plot
 path = "/home/rstudio/scpackage/inst/extdata/MGYS00000974.csv"
@@ -31,6 +32,20 @@ shinyServer(function(input, output) {
       addProviderTiles("Esri.WorldImagery", group = "Esri") %>%
       hideGroup("Markers")
   })
+
+  output$bin_plot = renderPlot({
+    in_covstats <- input$covstats_file
+    in_taxonomy <- input$taxonomy_file
+    if (is.null(in_covstats) | is.null(in_taxonomy)) return(NULL)
+
+    path_covstats = in_covstats$datapath
+    path_taxonomy = in_taxonomy$datapath
+
+    gbtools_plot(covstats_datapath = path_covstats,
+                 taxonomy_datapath = path_taxonomy,
+                 colour_tax_level = input$taxon_level)
+    })
+
   output$map_table = renderDataTable(filtered() %>%
                                   as.data.frame())
   output$download_data <- downloadHandler(

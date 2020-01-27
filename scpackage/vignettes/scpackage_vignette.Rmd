@@ -1,5 +1,5 @@
 ---
-title: "scpackage_vignette"
+title: "scpackage vignette"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{scpackage}
@@ -14,6 +14,47 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(scpackage)
+This vignette describes the scpackage data download, pipeline workflow and app usage. This package was developed for the structural colour internship project, but can be applied to any shotgun metagenomic data and marker genes. The function is to process input shotgun metagenomes, e.g. trimming, assembly, and to search for the presence of marker genes in these samples. The Shiny app in this package can be used to view the results.
+
+## Installing the scpackage package
+
+The scpackage package is available on github: https://github.com/uashogeschoolutrecht/structural_colours
+
+```{r}
+#example github install
 ```
+
+```{r setup}
+#library(scpackage)
+```
+
+## Download data from ebi using the `get_ebi_data()` function
+
+To download metagenomic data and metadata for use in the scpackage pipeline the `get_ebi_data()` function can be used. The only input needed is the accession of the study of samples of interest, e.g. "MGYS00000492", and the full path to the desired output location, e.g. "~/out". The output will be the fastq files and the metadata in a text file. An md5 checksum is performed to check the integrity of the downloaded data.
+
+```{r, eval = FALSE}
+get_data_ebi(accession = "MGYS00000492",
+             outdir = "~/out")`
+```
+
+The `get_ebi_data()` function uses the script get_data_ebi.sh from the /inst folder.
+
+## Running the scpackage pipeline
+
+The main use of the scpackage package is the pipeline. The required input are the metagenomes (fastq files) and the marker genes in (multi)fasta format (plain text). This pipeline processes the metagenomes and performs a BLAST search of the supplied marker genes against the metagenomic samples. The metagenomic samples have to be in their own directory without any other files, so when using the `get_ebi_data()` function be sure to move the md5 file and metadata to a new storage location. Running the pipeline takes a lot of time (hours to weeks), even with just a few samples, so it is highly recommended to run this process in the background. The prokka annotation step can be disabled for quicker runs, as performing this can take a day per sample. The pipeline using most of the other functions in the /R directory of this package, though these functions can be used on their own as well.
+
+```{r, eval = FALSE}
+run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/test_samples",
+                marker_genes_fasta = "/home/rstudio/scpackage/inst/extdata/M17.txt",
+                run_prokka = FALSE)
+```
+
+To run the pipeline in the background, a script with the commands to execute can be run using nohup Rscript (script path) from the command line, allowing the user to exit the terminal.
+
+```{bash, eval = FALSE}
+nohup Rscript ./script_using_pipeline.R
+```
+
+The pipeline will create output folders in the samples directory.
+
+## Using the sc Shiny app

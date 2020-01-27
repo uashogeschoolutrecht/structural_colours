@@ -3,7 +3,6 @@ Type: Package
 Title: Package For Project Structural Colour
 Version: 0.1.0
 Author: Patty Rosendaal
-    Boaz Kleijne
 Maintainer: Patty Rosendaal <mail@mail.com>
 Description: This package contains the code for the structural colour internship projects.
 License: GLP-3

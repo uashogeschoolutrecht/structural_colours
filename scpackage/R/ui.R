@@ -72,6 +72,21 @@ shinyUI(fluidPage(sidebarLayout(
                   srcdoc = HTML(as.character(
                     includeHTML("/home/rstudio/data/text.krona.html")
                   )))
+    ),
+    tabPanel(
+      "Bin blobs",
+      fileInput("covstats_file", "Upload covstats file here."),
+      fileInput("taxonomy_file", "Upload taxonomy file here."),
+      selectInput("taxon_level", "Select taxonomy level", choices = c("Superkingdom",
+                                                                      "Phylum",
+                                                                      "Class",
+                                                                      "Order",
+                                                                      "Family",
+                                                                      "Genus",
+                                                                      "Species")),
+      #plot here
+      plotOutput("bin_plot")
+
     )
   ))
 )))

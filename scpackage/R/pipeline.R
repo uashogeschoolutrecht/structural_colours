@@ -1,7 +1,7 @@
-#' Title
+#' Shotgun metagenomic analysis and marker gene detection pipeline.
 #'
-#' @param samples_dir
-#' @param marker_genes_fasta
+#' @param samples_dir Path to directory with fastq files of input samples
+#' @param marker_genes_fasta Path to fasta file of input marker protein(s).
 #'
 #' @return
 #' @export

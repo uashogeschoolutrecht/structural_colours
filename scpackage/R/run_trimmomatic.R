@@ -1,8 +1,8 @@
 #' This function uses trimmomatic to trim input fastq files and outputs them to the specified base dir. Please supply input as character type.
 #'
-#' @param mode Single end ("SE") or pairend end ("PE") fastq file(s) input, default = "SE"
+#' @param mode Single end ("SE") or paired end ("PE") fastq file(s) input, default = "SE"
 #' @param f1 Absolute path to fastq read one, supply single end file / direction one PE here
-#' @param f2 Absolute path to fastq read two, only use for second pairen end file not for single end file, default = "".
+#' @param f2 Absolute path to fastq read two, only use for second paired end file not for single end file, default = "". (single end)
 #' @param prefix Name of prefix for output files. Default = "trimmed"
 #' @param phred Phred scale, e.g. 33 / 64. Default = "33"
 #' @param minlen Minimum length of reads to keep, default = "90"

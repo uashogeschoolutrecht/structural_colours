@@ -1,3 +1,12 @@
+#' Plots sum stats of multiple fastqc results
+#'
+#' @param results_dir Path to directory containing fastqc results
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' fastqc_multisummary(results_dir = paste0(samples_dir, "/fastqc/untrimmed"))
 fastqc_multisummary = function(results_dir) {
   old_wd = getwd()
   setwd(results_dir)
