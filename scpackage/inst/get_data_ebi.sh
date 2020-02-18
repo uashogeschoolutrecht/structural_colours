@@ -14,7 +14,6 @@ esac
 done
 
 prefetch ${ACC}
-touch ${OUTDIR}/md5.txt
-echo "${ACC}\t$(md5sum ~/ncbi/public/sra/${ACC}*).sra" >> ${OUTDIR}/md5.txt
+vdb-validate ${ACC}
 fastq-dump ${LIB} ${ACC}
 gzip ${ACC}*

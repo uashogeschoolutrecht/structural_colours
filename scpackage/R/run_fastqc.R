@@ -7,7 +7,7 @@
 #'
 #' @examples
 #' run_fastqc("~/example.fastq")
-run_fastqc = function(filepath) {
-  command = paste0("/FastQC/fastqc ", filepath)
+run_fastqc = function(filepath, outdir) {
+  command = paste0("/FastQC/fastqc ", filepath, " --outdir ", outdir)
   system(command)
 }

@@ -426,8 +426,9 @@ source("/home/rstudio/scpackage/R/makeblastdb.R")
 source("/home/rstudio/scpackage/R/blast.R")
 source("/home/rstudio/scpackage/R/cat_rename_seq-id.R")
 source("/home/rstudio/scpackage/R/CAT_taxonomy_to_krona_format.R")
+source("/home/rstudio/scpackage/R/ktImportText.R")
 source("/home/rstudio/scpackage/R/run_prokka.R")
 
 run_sc_pipeline(samples_dir = "/home/rstudio/data/geodescent/test_samples",
-                marker_genes_fasta = "/home/rstudio/scpackage/inst/extdata/M17.txt")
+                marker_genes_fasta = "/home/rstudio/scpackage/inst/extdata/sc_markers.faa")
 

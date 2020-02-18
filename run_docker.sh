@@ -41,13 +41,13 @@ err_report() {
 trap 'err_report $LINENO' ERR
 
 # Running run container command
-if [ -z ${MOUNT+x} ]; then 
+if [ -z ${MOUNT+x} ]; then
   sudo docker run -d --rm -p ${PORT}:8787 --name ${CONTAINER_NAME} \
   -e USERID=${USER_ID} -e PASSWORD=${PASSWD} ${IMAGE};
-else 
+else
   sudo docker run -d --rm -p ${PORT}:8787 --name ${CONTAINER_NAME} \
   -e USERID=${USER_ID} -e PASSWORD=${PASSWD} \
-  -v ${MOUNT}:/home/rstudio/mount ${IMAGE}
+  -v ${MOUNT}:/mount ${IMAGE}
 fi
 status=$?
 echo "Command exit status: ${status}"

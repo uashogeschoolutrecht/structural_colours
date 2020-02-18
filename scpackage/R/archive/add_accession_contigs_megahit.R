@@ -8,23 +8,35 @@
 #' @export
 #'
 #' @examples
-add_accession_contigs_megahit2 = function(megahit_outdir,
-                                          prefix,
+#' add_accession_contigs_megahit2(megahit_outdir = "/home/rstudio/data/megahit_tara/megahit",
+#' outfile = "/home/rstudio/data/test_db_tara")
+add_accession_contigs_megahit = function(megahit_outdir,
                                           outfile) {
   command = paste0("touch ", outfile)
   system(command)
+
+  files = list.files(path = megahit_outdir)
   path_to_contigs = paste0(
-    megahit_outdir,
+    megahit_outdir, "/", files,
     "/final.contigs.fa"
   )
-  command = paste0("sed 's/>/",
-                   ">",
-                   prefix,
-                   "_",
-                   "/' ",
-                   path_to_contigs,
-                   " >> ",
-                   outfile
-  )
-  system(command)
+
+  for (path in path_to_contigs){
+   prefix = strsplit(path, "megahit_")[[1]]
+   prefix = strsplit(prefix[3], ".f")[[1]][1]
+
+   print(path)
+   print(prefix)
+
+   command = paste0("sed 's/>/",
+   ">",
+   prefix,
+   "_",
+   "/' ",
+   path,
+   " >> ",
+   outfile
+   )
+   system(command)
+  }
 }

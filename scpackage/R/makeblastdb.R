@@ -8,6 +8,10 @@
 #' @export
 #'
 #' @examples
+#' makeblastdb(input = "/home/rstudio/data/test_db_tara",
+#' outname = "tara_db",
+#' outdir = "/home/rstudio/data/",
+#' dbtype = "nucl")
 makeblastdb <- function(input, outname, outdir, dbtype){
   #run makeblastdb
   command = paste0("makeblastdb", " -in ", input, " -out ", outname, " -parse_seqids ", " -dbtype ", dbtype)
@@ -20,3 +24,5 @@ makeblastdb <- function(input, outname, outdir, dbtype){
   command1 <- paste0("mv ", outname, ".*", " ", to)
   system(command1)
 }
+
+

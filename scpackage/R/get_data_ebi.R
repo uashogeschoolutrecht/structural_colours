@@ -2,6 +2,7 @@
 #'
 #' @param accession MGnify accession, such as MGYS00000492
 #' @param outdir Existing directory to store output files
+#' @param ncbi_dir Directory where ncbi sra files are stored, edit temp dir path in ~/.ncbi/user-settings.mkfg
 #'
 #' @return total_md5s The md5s of all the input samples
 #' @export
@@ -9,7 +10,7 @@
 #' @examples
 #' get_data_ebi(accession = "MGYS00000492",
 #' outdir = "~/outdir")
-get_data_ebi = function(accession, outdir){
+get_data_ebi = function(accession, outdir, ncbi_dir){
   library("httr")
   require("httr")
   library("jsonlite")
@@ -124,8 +125,6 @@ get_data_ebi = function(accession, outdir){
   write.csv(metadata, file = paste0(outdir, "/", accession, "_metadata.txt"), quote = FALSE)
   ########################################################################
 
-
-
   ##### get sra downloads ################################################
   for (i in 1:length(metadata$run_accession)){
     if (as.character(metadata$library_layout)[i] == "PAIRED"){
@@ -137,82 +136,7 @@ get_data_ebi = function(accession, outdir){
     system(paste0("bash /home/rstudio/scpackage/inst/get_data_ebi.sh -a ", acc, " -o ", outdir, " -l ", lib))
     system(paste0("mv ", acc, "* ", outdir))
   }
-  system("rm -rf ~/ncbi")
+  system(paste0("rm -rf ", ncbi_dir))
   ########################################################################
 
-
-  ##### checksum #########################################################
-  md5sum_results = read_delim(file = paste0(outdir, "/md5.txt"), delim = "\\t", col_names = FALSE)
-  md5 = unlist(map(strsplit(md5sum_results$X2, " "),1))
-  md5 = substr(md5, start = 2, stop = nchar(md5))
-  md5_out = as.data.frame(cbind(md5sum_results$X1, md5))
-  md5_in = as.data.frame(cbind(as.character(metadata$run_accession), as.character(metadata$sra_md5)))
-  md5_out = dplyr::rename(md5_out, out_md5 = md5)
-  md5_in = dplyr::rename(md5_in, in_md5 = V2)
-  md5s = join(md5_in, md5_out)
-
-  all_md5s = md5s
-
-  failed_accessions = list()
-  for (i in 1:length(as.character(md5s$V1))){
-    print(i)
-    in_md5 = as.character(md5s$in_md5)[i]
-    out_md5 = as.character(md5s$out_md5)[i]
-    if (in_md5 != out_md5){
-      failed_accession = as.character(md5s$V1)[i]
-      print(paste0("md5 of downloaded sample ", failed_accession, ": ", out_md5,
-                   " does not match the md5: ", in_md5, "."))
-      failed_accessions = append(failed_accessions, failed_accession)
-    }
-  }
-
-  if (length(failed_accessions) != 0){
-    print("Samples with incorrent md5 detected. Will retry downloading failed samples.")
-    counter_max = 3
-    counter = 0
-    repeat {
-      counter = counter + 1
-      print(paste0("Retrying download, try #", counter))
-      system(paste0("rm ", outdir, "/md5.txt"))
-      for (i in 1:length(failed_accessions)){
-        acc = failed_accessions[i]
-        record = subset(metadata, metadata$run_accession == acc)
-        if (as.character(record$library_layout) == "PAIRED"){
-          lib = "-split-files"
-        } else {
-          lib = ""
-        }
-        system(paste0("bash /home/rstudio/scpackage/inst/get_data_ebi.sh -a ", acc, " -o ", outdir, " -l ", lib))
-        system(paste0("mv ", acc, "* ", outdir))
-      }
-      system("rm -rf ~/ncbi")
-      #recheck md5
-      md5sum_results = read_delim(file = paste0(outdir, "/md5.txt"), delim = "\\t", col_names = FALSE)
-      md5 = unlist(map(strsplit(md5sum_results$X2, " "),1))
-      md5 = substr(md5, start = 2, stop = nchar(md5))
-      md5_out = as.data.frame(cbind(md5sum_results$X1, md5))
-      md5_in = as.data.frame(cbind(as.character(metadata$run_accession), as.character(metadata$sra_md5)))
-      md5_out = rename(md5_out, out_md5 = md5)
-      md5_in = rename(md5_in, in_md5 = V2)
-      md5s = join(md5_in, md5_out)
-      system(paste0("rm ", outdir, "/md5.txt"))
-      failed_accessions = list()
-      for (i in 1:length(md5s$V1)){
-        in_md5 = as.character(md5s$in_md5)[i]
-        out_md5 = as.character(md5s$out_md5)[i]
-        if (in_md5 != out_md5){
-          failed_accession = as.character(md5s$V1)[i]
-          print(paste0("md5 of downloaded sample ", failed_accession, ": ", out_md5,
-                       " does not match the md5: ", in_md5, "."))
-          failed_accessions = append(failed_accessions, failed_accession)
-        }
-      }
-      if (counter == counter_max | length(failed_accessions) == 0){
-        print("Either the max tries have been tried or there are no more failed downloads left.")
-        print(paste0("Failed downloads left: ", as.character(failed_accessions)))
-        break
-      }
-    }
-  }
-  return(all_md5s)
 }
