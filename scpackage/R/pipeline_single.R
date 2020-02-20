@@ -28,17 +28,17 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
 
 
   ##### FastQC quality control ---------------------------------------------------------------
-  command = paste0("mkdir -p ", outdir, "/fastqc/untrimmed")
+  command = paste0("mkdir -p ", outdir, "/fastqc/untrimmed/", sample_accession)
   system(command)
 
   for (sample in sample_path){
-    run_fastqc(sample, outdir = paste0(outdir, "/fastqc/untrimmed"))
+    run_fastqc(sample, outdir = paste0(outdir, "/fastqc/untrimmed/", sample_accession))
   }
 
 
   ##### Quality trimming ---------------------------------------------------------------------
   #creating output folder
-  command = paste0("mkdir ", outdir, "/trimmed")
+  command = paste0("mkdir -p ", outdir, "/trimmed/", sample_accession)
   system(command)
   if (length(sample_path) == 2){
     trim_stat = run_trimmomatic(mode = "PE",
@@ -50,7 +50,7 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
                                 f1 = sample_path,
                                 prefix = paste0("trimmed_", sample_accession))
   }
-  command = paste0("mv ", "trimmed_* ", outdir, "/trimmed")
+  command = paste0("mv ", "trimmed_* ", outdir, "/trimmed/", sample_accession)
   system(command)
   #log
   system(paste0("mkdir ", outdir, "/workspace_logs"))
@@ -59,14 +59,17 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
 
 
   ##### FastQC quality control 2: after trimming ---------------------------------------------
-  command = paste0("mkdir -p ", outdir, "/fastqc/trimmed")
+  command = paste0("mkdir -p ", outdir, "/fastqc/trimmed/", sample_accession)
   system(command)
-  trimmed_sample = paste0(outdir, "/trimmed/", list.files(path = paste0(outdir, "/trimmed")))
+  trimmed_sample = paste0(outdir, "/trimmed/", sample_accession, "/", list.files(path = paste0(outdir, "/trimmed/", sample_accession)))
   subset_unorphaned = str_detect(trimmed_sample, pattern = "_[0123456789]P")
-  trimmed_sample = trimmed_sample[subset_unorphaned]
+  if (subset_unorphaned != FALSE){
+    trimmed_sample = trimmed_sample[subset_unorphaned]
+  }
+
 
   for (sample in trimmed_sample){
-    run_fastqc(sample, outdir = paste0(outdir, "/fastqc/trimmed"))
+    run_fastqc(sample, outdir = paste0(outdir, "/fastqc/trimmed/", sample_accession))
   }
 
 
@@ -93,7 +96,7 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
       outdir = megahit_outdir,
       outname = sample_accession
     )
-    io_log = c(sample_accession, path, "NA")
+    io_log = c(sample_accession, trimmed_sample, "NA")
   }
   megahit_io = rbind(header, io_log)
   save.image(file = paste0(outdir, "/workspace_logs/",
@@ -111,7 +114,7 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
 
   # running quast
   run_quast(filepath = contig_path,
-            outdir = paste0(outdir, "/quast/", "quast_", sample_accession))
+            outdir = paste0(outdir, "/quast/", sample_accession))
 
   # collecting basic stats assemblies
   quast_parent_dir = paste0(outdir, "/quast")
@@ -198,20 +201,19 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
 
 
   ##### Blast  -------------------------------------------------------------------------------
-  cmd = paste0("mkdir ", outdir, "/blast")
+  cmd = paste0("mkdir -p ", outdir, "/blast/", sample_accession)
   system(cmd)
 
   #renaming adding bin and sample names to contigs to retrace
   metabat_dir = paste0(outdir, "/metabat2")
-  cat_rename_seq_id(bin_dirs_parent_dir = metabat_dir)
+  cat_rename_seq_id(outdir = outdir,
+                    sample_accession = sample_accession)
 
   #concatenating renamed contig files for use in make blast db
-  sample_dirs_metabat = paste0(metabat_dir, "/", list.files(metabat_dir))
-  blast_db_fasta = paste0(outdir, "/blast/database.fa")
-  for (metabat_sample_dir in sample_dirs_metabat){
-    files = list.files(metabat_sample_dir)
-    contig_file = files[grepl("total_", files)]
-    contig_path = paste0(metabat_sample_dir, "/", contig_file)
+  files = list.files(paste0(outdir, "/metabat2/", sample_accession))
+  contig_file = files[grepl("total_", files)]
+  contig_path = paste0(outdir, "/metabat2/", sample_accession, "/", contig_file)
+  if (file.exists(blast_db_fasta) == FALSE){
     command = paste0("cat ", contig_path, " >> ", blast_db_fasta)
     system(command)
   }
@@ -219,14 +221,14 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
   #making blast db
   makeblastdb(input = blast_db_fasta,
               outname = 'blast_database',
-              outdir = paste0(outdir, "/blast/"),
+              outdir = paste0(outdir, "/blast/", sample_accession, "/"),
               dbtype = 'nucl')
 
   #running tblastn (prot against nucl)
   blast(blast = "tblastn",
-        blast_db = paste0(outdir, "/blast/blast_database/blast_database"),
+        blast_db = paste0(outdir, "/blast/", sample_accession, "/blast_database/blast_database"),
         input = marker_genes_fasta,
-        out = paste0(outdir, "/blast/blast_out"),
+        out = paste0(outdir, "/blast/", sample_accession, "/blast_out"),
         format = 6)
 
   save.image(file = paste0(outdir, "/workspace_logs/",

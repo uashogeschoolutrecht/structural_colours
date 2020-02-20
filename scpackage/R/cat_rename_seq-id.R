@@ -10,37 +10,43 @@
 #' metabat_dir = paste0(samples_dir, "/metabat2")
 #' cat_rename_seq_id(bin_dirs_parent_dir = metabat_dir)
 #' }
-cat_rename_seq_id = function(bin_dirs_parent_dir) {
-  bin_dirs = list.files(path = bin_dirs_parent_dir)
-  for (i in seq(length(bin_dirs))) {
-    samplename = bin_dirs[i]
-    bin_dir = bin_dirs[i]
+cat_rename_seq_id = function(outdir, sample_accession) {
 
-    outfile = paste0(bin_dirs_parent_dir,
-                     "/",
-                     bin_dir,
+    bin_dir = paste0(outdir, "/metabat2/", sample_accession)
+
+    outfile = paste0(outdir,
+                     "/metabat2/",
+                     sample_accession,
                      "/total_",
-                     samplename,
+                     sample_accession,
                      ".fa")
 
+    if (file.exists(outfile)){
+      print("Deleting already present copy of output file before re-running.")
+      cmd = paste0("rm ", outfile)
+      system(cmd)
+    }
+
+
     #get paths to bins, only files with .fa suffix
-    sample_bin_paths = paste0(bin_dirs_parent_dir,
+    sample_bin_paths = paste0(outdir,
+                              "/metabat2/",
+                              sample_accession,
                               "/",
-                              samplename,
-                              "/",
-                              list.files(paste0(bin_dirs_parent_dir, "/", samplename)))[grepl(pattern = '*.fa',
+                              list.files(paste0(outdir, "/metabat2/", sample_accession)))[grepl(pattern = '*.fa',
                                                                                               paste0(
-                                                                                                bin_dirs_parent_dir,
+                                                                                                outdir, "/metabat2",
                                                                                                 "/",
-                                                                                                samplename,
+                                                                                                sample_accession,
                                                                                                 "/",
-                                                                                                list.files(paste0(bin_dirs_parent_dir, "/", samplename))
+                                                                                                list.files(paste0(outdir, "/metabat2/", sample_accession))
                                                                                               ))]
     for (bin_path in sample_bin_paths) {
+
       bin_name = strsplit(bin_path, split = 'mapped.metabat.')[[1]][2]
       bin_name = substring(bin_name, 1, nchar(bin_name) - 3)
 
-      seq_id = paste0(samplename, "_b:", bin_name)
+      seq_id = paste0(sample_accession, "_b:", bin_name)
 
       command = paste0("sed 's/>/",
                        ">",
@@ -53,4 +59,3 @@ cat_rename_seq_id = function(bin_dirs_parent_dir) {
       system(command)
     }
   }
-}
