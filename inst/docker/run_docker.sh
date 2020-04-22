@@ -47,7 +47,7 @@ if [ -z ${MOUNT+x} ]; then
 else
   sudo docker run -d --rm -p ${PORT}:8787 --name ${CONTAINER_NAME} \
   -e USERID=${USER_ID} -e PASSWORD=${PASSWD} \
-  -v ${MOUNT}:/data -v /data2:/data2 -v /home/patty_rosendaal/structural_colours/scpackage:/scpackage ${IMAGE}
+  -v ${MOUNT}:/data -v /data2:/data2 -v /home/patty_rosendaal/structural_colours:/structural_colours ${IMAGE}
 fi
 status=$?
 echo "Command exit status: ${status}"
