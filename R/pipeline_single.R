@@ -81,7 +81,7 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
   if (length(trimmed_sample) == 2) {
     run_megahit(
       PE = T,
-      script_path = "/scpackage/inst/megahit.sh",
+      script_path = "/structural_colours/inst/megahit.sh",
       r1 = trimmed_sample[1],
       r2 = trimmed_sample[2],
       outdir = megahit_outdir,
@@ -91,7 +91,7 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
   } else {
     run_megahit(
       PE = F,
-      script_path = "/scpackage/inst/megahit.sh",
+      script_path = "/structural_colours/inst/megahit.sh",
       r1 = trimmed_sample,
       outdir = megahit_outdir,
       outname = sample_accession
@@ -119,6 +119,9 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
   # collecting basic stats assemblies
   quast_parent_dir = paste0(outdir, "/quast")
   quast_summary_stats = quast_summary(quast_parent_dir = quast_parent_dir)
+
+  write.csv(quast_summary_stats, file = paste0(outdir, "/quast/", accession, "/quast_sum_stats.txt"), quote = FALSE)
+
 
   #create bbmap main outdir
   command = paste0("mkdir ", outdir, "/bbmap")
@@ -159,8 +162,10 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
     }
 
   bbmap_summary_stats = record
-  save.image(file = paste0(outdir, "/workspace_logs/",
-                           Sys.time(), "_workspace.RData"))
+
+
+  write.csv(bbmap_summary_stats, file = paste0(outdir, "/bbmap/", accession, "/sum_stats.txt"), quote = FALSE)
+
 
 
   ##### Binning ------------------------------------------------------------------------
@@ -171,7 +176,7 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
   system(command)
   sorted_bam_path = paste0(outdir, "/bbmap/", sample_accession, "/mapped_sorted.bam")
   #run metbata
-  metabat_log = run_metabat2(metabat_script = "/scpackage/inst/metabat2.sh",
+  metabat_log = run_metabat2(metabat_script = "/structural_colours/inst/metabat2.sh",
                              s_bam = sorted_bam_path,
                              fasta = contig_path
   )
@@ -195,9 +200,8 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
   binlog_header = rbind(binlog_header, new_log_record)
   metabat2_log = binlog_header
 
-  save.image(file = paste0(outdir, "/workspace_logs/",
-                           Sys.time(), "_workspace.RData"))
 
+  write.csv(metabat2_log, file = paste0(outdir, "/metabat2/", "bin_log.txt"), quote = FALSE)
 
 
   ##### Blast  -------------------------------------------------------------------------------
@@ -255,95 +259,91 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
 
 
   # ##### Running prokka annoations pipeline
-  # cmd = paste0("mkdir ", outdir, "/prokka")
-  # system(cmd)
-  #
-  # contig_path = paste0(outdir, "/metabat2/", sample_accession, "/total_", sample_accession, ".fa")
-  #
-  # print(
-  #   "Running prokka annotation pipeline.
-  # In case of error make sure the sample-specific output directory does not already exist.
-  # If there is an error but output is still generated the tbl2asn program may be outdated.
-  # If this is the case one (non-essential) output file will be missing."
-  # )
-  #
-  # try(
-  #   run_prokka(prokka_script = "inst/prokka.sh",
-  #              contigpath = contig_path,
-  #              outdir = paste0(outdir, "/prokka/", sample_accession),
-  #              prefix = sample_accession)
-  # )
-  #
-  # save.image(file = paste0(outdir, "/workspace_logs/",
-  #                          Sys.time(), "_workspace.RData"))
+  cmd = paste0("mkdir ", outdir, "/prokka")
+  system(cmd)
+
+  contig_path = paste0(outdir, "/metabat2/", sample_accession, "/total_", sample_accession, ".fa")
+
+  print(
+    "Running prokka annotation pipeline.
+  In case of error make sure the sample-specific output directory does not already exist.
+  If there is an error but output is still generated the tbl2asn program may be outdated.
+  If this is the case one (non-essential) output file will be missing."
+  )
+
+  try(
+    run_prokka(prokka_script = "/structural_colours/inst/prokka.sh",
+               contigpath = contig_path,
+               outdir = paste0(outdir, "/prokka/", sample_accession),
+               prefix = sample_accession)
+  )
+
+  save.image(file = paste0(outdir, "/workspace_logs/",
+                           Sys.time(), "_workspace.RData"))
 
 }
 
-# library("rjsonapi")
-# library("foreach")
-# library(parallel)
-# library(MASS)
-# library(ggplot2)
-# library(stringr)
-# library(sys)
-# library(dplyr)
-# source("/scpackage/R/get_MGYS00000991.R")
-# source("/scpackage/R/get_MGYS00000974.R")
-# source("/scpackage/R/get_MGYS00005036.R")
-# source("/scpackage/R/get_filereport.R")
-# source("/scpackage/R/get_metadata.R")
-# source("/scpackage/R/get_fastq.R")
-# source("/scpackage/R/grinder.R")
-# source("/scpackage/R/run_fastqc.R")
-# source("/scpackage/R/fastqc_multisummary.R")
-# source("/scpackage/R/run_trimmomatic.R")
-# source("/scpackage/R/run_megahit.R")
-# source("/scpackage/R/run_quast.R")
-# source("/scpackage/R/quast_summary.R")
-# source("/scpackage/R/run_bbmap.R")
-# source("/scpackage/R/run_metabat2.R")
-# source("/scpackage/R/run_CAT.R")
-# source("/scpackage/R/makeblastdb.R")
-# source("/scpackage/R/blast.R")
-# source("/scpackage/R/cat_rename_seq-id.R")
-# source("/scpackage/R/CAT_taxonomy_to_krona_format.R")
-# source("/scpackage/R/ktImportText.R")
-# source("/scpackage/R/run_prokka.R")
+library("rjsonapi")
+library("foreach")
+library(parallel)
+library(MASS)
+library(ggplot2)
+library(stringr)
+library(sys)
+library(dplyr)
+source("/structural_colours/R/get_filereport.R")
+source("/structural_colours/R/get_metadata.R")
+source("/structural_colours/R/get_fastq.R")
+source("/structural_colours/R/grinder.R")
+source("/structural_colours/R/run_fastqc.R")
+source("/structural_colours/R/fastqc_multisummary.R")
+source("/structural_colours/R/run_trimmomatic.R")
+source("/structural_colours/R/run_megahit.R")
+source("/structural_colours/R/run_quast.R")
+source("/structural_colours/R/quast_summary.R")
+source("/structural_colours/R/run_bbmap.R")
+source("/structural_colours/R/run_metabat2.R")
+source("/structural_colours/R/run_CAT.R")
+source("/structural_colours/R/makeblastdb.R")
+source("/structural_colours/R/blast.R")
+source("/structural_colours/R/cat_rename_seq-id.R")
+source("/structural_colours/R/CAT_taxonomy_to_krona_format.R")
+source("/structural_colours/R/ktImportText.R")
+source("/structural_colours/R/run_prokka.R")
 
 
-# #running on tara samples
-# for (file in list.files(path = "/data2")[4:101]){
-#   outdir = "/data/tara_output"
-#   accession = str_split(string = file, pattern = "_")[[1]][1]
-#   if (any(grepl(pattern = accession, list.files(path = paste0(outdir, "/CAT")))) == FALSE){
-#   if (grepl(pattern = ".gz", file)){
-#     #only files with .gz, zipped fastq files.
-#     if (grepl(pattern = "_2.f", file)){
-#       #sample is PE
-#       accession = str_split(string = file, pattern = "_2.f")[[1]][1]
-#       sample_path = c(paste0("/data2/", accession, "_1.fastq.gz"),
-#                       paste0("/data2/", accession, "_2.fastq.gz"))
-#
-#         run_sc_pipeline(sample_path = sample_path,
-#                         marker_genes_fasta = "/scpackage/inst/extdata/sc_markers.faa",
-#                         outdir = "/data/tara_output")
-#         cat(sample_path, sep = ",", file = "/data/tara_pipeline_batch1", append = TRUE)
-#
-#
-#     } else {
-#       if (grepl(pattern = "_1.f", file) == FALSE){
-#         #SE samples
-#         sample_path = paste0("/data2/", file)
-#         run_sc_pipeline(sample_path = sample_path,
-#                         marker_genes_fasta = "/scpackage/inst/extdata/sc_markers.faa",
-#                         outdir = "/data/tara_output")
-#         cat(sample_path, sep = ",", file = "/data/tara_pipeline_batch1", append = TRUE)
-#       }
-#     }
-#   }}
-# }
+for (file in list.files(path = "/data2")[6:17]){
+  outdir = "/data/tara_output"
+  accession = str_split(string = file, pattern = "_")[[1]][1]
+  if (any(grepl(pattern = accession, list.files(path = paste0(outdir, "/prokka")))) == FALSE){
+  if (grepl(pattern = ".gz", file)){
+    #only files with .gz, zipped fastq files.
+    if (grepl(pattern = "_2.f", file)){
+      #sample is PE
+      accession = str_split(string = file, pattern = "_2.f")[[1]][1]
+      sample_path = c(paste0("/data2/", accession, "_1.fastq.gz"),
+                      paste0("/data2/", accession, "_2.fastq.gz"))
+
+        run_sc_pipeline(sample_path = sample_path,
+                        marker_genes_fasta = "/structural_colours/inst/extdata/sc_markers.faa",
+                        outdir = "/data/tara_output")
+        cat(sample_path, sep = ",", file = "/data/tara_pipeline_batch1", append = TRUE)
+
+
+    } else {
+      if (grepl(pattern = "_1.f", file) == FALSE){
+        #SE samples
+        sample_path = paste0("/data2/", file)
+        run_sc_pipeline(sample_path = sample_path,
+                        marker_genes_fasta = "/structural_colours/inst/extdata/sc_markers.faa",
+                        outdir = "/data/tara_output")
+        cat(sample_path, sep = ",", file = "/data/tara_pipeline_batch1", append = TRUE)
+      }
+    }
+  }}
+}
 
 # run_sc_pipeline(sample_path = sample_path,
-#                 marker_genes_fasta = "/scpackage/inst/extdata/sc_markers.faa",
+#                 marker_genes_fasta = "/structural_colours/inst/extdata/sc_markers.faa",
 #                 outdir = "/data/tara_output")
 
