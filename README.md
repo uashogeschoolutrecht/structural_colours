@@ -1,5 +1,5 @@
 # structural_colours
-This is the repo for the HU - Hoekmine "Structural Colours" Intership project. In this repo the structural colours package is available. This package can be used for obtaining and preprocessing shotgun metagenomic data.
+This is the repo for the HU - Hoekmine "Structural Colours" Intership project. In this repo the structural colours package is available. This package can be used for obtaining and processing shotgun metagenomic data.
 
 # Installation
 ## Docker install
