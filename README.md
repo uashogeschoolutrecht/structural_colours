@@ -7,11 +7,11 @@ A dockerfile is available in this package to create a container to run the packa
 
 **1**: Install Docker. This can be done by running the ‘install_docker.sh’ script. The script can be run on the command line using the command ‘bash install_docker.sh’.
 
-**2**: Create a Docker image. A Docker image is built from a Dockerfile. This image will contain the software needed to build the container. The image can be built using the ‘build_docker.sh’ script available on the GitHub repository of the internship project. The script can be run on the command line using the command ‘bash build_docker.sh (flags)’, with the options needed in the following flags:
+**2**: Create a Docker image. A Docker image is built from a Dockerfile. This image will contain the software needed to build the container. The image can be built using the ‘build_docker.sh’ script. The script can be run on the command line using the command ‘bash build_docker.sh (flags)’, with the options needed in the following flags:
 -	i: Path to the Dockerfile, e.g. ‘/home/rstudio/DockerFile’. Use the Dockerfile from the repo to run this package in.
 -	n: Name of output Docker image, e.g. ‘image1’.
 
-**3**: Build Docker RStudio server container. Using the Docker image a container running the software can be made. The container can be built using the ‘run_docker.sh’ script available on the GitHub repository of the internship project. The script can be run on the command line using the command ‘bash run_docker.sh (flags)’, with the options needed in the following flags:
+**3**: Build Docker RStudio server container. Using the Docker image a container running the software can be made. The container can be built using the ‘run_docker.sh’ script. The script can be run on the command line using the command ‘bash run_docker.sh (flags)’, with the options needed in the following flags:
 -	p: Port to run container in, e.g. ‘28787’. This will run the container on IP:28787.
 -	n: Name of output container, e.g. ‘container1’.
 -	u: User ID, you can check your using ID by running ‘echo $UID’. This is necessary for sharing file permissions with the host system in case you are mounting a directory to the container.
