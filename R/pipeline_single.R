@@ -122,6 +122,7 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
 
   write.csv(quast_summary_stats, file = paste0(outdir, "/quast/", accession, "/quast_sum_stats.txt"), quote = FALSE)
 
+  #x = read.csv(file = "/data/tara_output/metabat2/ERR164407/bin_log.txt")
 
   #create bbmap main outdir
   command = paste0("mkdir ", outdir, "/bbmap")
@@ -201,7 +202,8 @@ run_sc_pipeline = function(sample_path, outdir, marker_genes_fasta) {
   metabat2_log = binlog_header
 
 
-  write.csv(metabat2_log, file = paste0(outdir, "/metabat2/", "bin_log.txt"), quote = FALSE)
+
+  write.csv(metabat2_log, file = paste0(outdir, "/metabat2/", accession, "/bin_log.txt"), quote = FALSE)
 
 
   ##### Blast  -------------------------------------------------------------------------------
