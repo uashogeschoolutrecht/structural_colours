@@ -21,3 +21,10 @@ A dockerfile is available in this package to create a container to run the packa
 
 Note: the -m flag is not mandatory; it is not necessary to mount a directory to the container. Do keep in mind that files created in the container are ephemeral unless the directory is mounted to the host.
 
+## Package install
+The package can be installed in the Dockerized RStudio Server using devtools. To do this the following code can be run.
+```
+library(devtools)
+install_github("uashogeschoolutrecht/structural_colours")
+library(structural_colours)
+```
